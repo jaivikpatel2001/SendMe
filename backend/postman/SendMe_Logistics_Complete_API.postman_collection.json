@@ -1,0 +1,2607 @@
+{
+	"info": {
+		"_postman_id": "sendme-logistics-complete-api",
+		"name": "SendMe Logistics - Complete API Collection",
+		"description": "Comprehensive API collection for SendMe Logistics platform covering all 8 models with complete CRUD operations and model-specific functionality",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "sendme-logistics"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "bookingId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "vehicleId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "promoCodeId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "reviewId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "notificationId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cmsId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "supportTicketId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.token) {",
+									"        pm.collectionVariables.set('authToken', response.data.token);",
+									"    }",
+									"    if (response.data && response.data.user && response.data.user._id) {",
+									"        pm.collectionVariables.set('userId', response.data.user._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+447123456789\",\n    \"password\": \"Password123!\",\n    \"role\": \"customer\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.token) {",
+									"        pm.collectionVariables.set('authToken', response.data.token);",
+									"    }",
+									"    if (response.data && response.data.user && response.data.user._id) {",
+									"        pm.collectionVariables.set('userId', response.data.user._id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"Password123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					}
+				},
+				{
+					"name": "Request OTP",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone\": \"+447123456789\",\n    \"type\": \"verification\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/otp-request",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"otp-request"
+							]
+						}
+					}
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phone\": \"+447123456789\",\n    \"otp\": \"123456\",\n    \"type\": \"verification\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/otp-verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"otp-verify"
+							]
+						}
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"your-refresh-token-here\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👥 User Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users?page=1&limit=20&role=customer&status=active&search=john&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "role",
+											"value": "customer"
+										},
+										{
+											"key": "status",
+											"value": "active"
+										},
+										{
+											"key": "search",
+											"value": "john"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get User by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"Jane\",\n    \"lastName\": \"Smith\",\n    \"email\": \"jane.smith@example.com\",\n    \"phone\": \"+447987654321\",\n    \"password\": \"Password123!\",\n    \"role\": \"driver\",\n    \"status\": \"active\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"John Updated\",\n    \"lastName\": \"Doe Updated\",\n    \"phone\": \"+447123456790\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update User",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\": \"John Patched\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "User-Specific Operations",
+					"item": [
+						{
+							"name": "Update User Status",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"suspended\",\n    \"reason\": \"Policy violation\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}",
+										"status"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Driver Location",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"latitude\": 51.5074,\n    \"longitude\": -0.1278\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}/location",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}",
+										"location"
+									]
+								}
+							}
+						},
+						{
+							"name": "Toggle Driver Online Status",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"isOnline\": true\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/{{userId}}/online-status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"{{userId}}",
+										"online-status"
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Nearby Drivers",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/users/drivers/nearby?latitude=51.5074&longitude=-0.1278&radius=10&vehicleType=vehicle_type_id",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"drivers",
+										"nearby"
+									],
+									"query": [
+										{
+											"key": "latitude",
+											"value": "51.5074"
+										},
+										{
+											"key": "longitude",
+											"value": "-0.1278"
+										},
+										{
+											"key": "radius",
+											"value": "10"
+										},
+										{
+											"key": "vehicleType",
+											"value": "vehicle_type_id"
+										}
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "📦 Booking Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Bookings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/bookings?page=1&limit=20&status=pending&serviceType=delivery&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "status",
+											"value": "pending"
+										},
+										{
+											"key": "serviceType",
+											"value": "delivery"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Booking by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Booking",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.booking && response.data.booking._id) {",
+											"        pm.collectionVariables.set('bookingId', response.data.booking._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"serviceType\": \"delivery\",\n    \"vehicleType\": \"{{vehicleId}}\",\n    \"pickupLocation\": {\n        \"address\": \"123 Pickup Street, London, UK\",\n        \"coordinates\": [-0.1278, 51.5074],\n        \"contactName\": \"John Pickup\",\n        \"contactPhone\": \"+447123456789\"\n    },\n    \"dropLocation\": {\n        \"address\": \"456 Drop Avenue, London, UK\",\n        \"coordinates\": [-0.1378, 51.5174],\n        \"contactName\": \"Jane Drop\",\n        \"contactPhone\": \"+447987654321\"\n    },\n    \"packageDetails\": {\n        \"description\": \"Important documents\",\n        \"weight\": 2.5,\n        \"dimensions\": {\n            \"length\": 30,\n            \"width\": 20,\n            \"height\": 5\n        },\n        \"value\": 100,\n        \"isFragile\": false\n    },\n    \"specialInstructions\": \"Handle with care\",\n    \"addOns\": [\"insurance\", \"signature_required\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Booking",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"specialInstructions\": \"Updated instructions - please call before delivery\",\n    \"packageDetails\": {\n        \"description\": \"Updated package description\",\n        \"weight\": 3.0\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update Booking",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"specialInstructions\": \"Patched instructions\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Cancel Booking",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"reason\": \"Customer requested cancellation\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Booking-Specific Operations",
+					"item": [
+						{
+							"name": "Update Booking Status",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"picked_up\",\n    \"notes\": \"Package collected successfully\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}/status",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}",
+										"status"
+									]
+								}
+							}
+						},
+						{
+							"name": "Assign Driver to Booking",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"driverId\": \"{{userId}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}/assign-driver",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}",
+										"assign-driver"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Booking Location",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"latitude\": 51.5074,\n    \"longitude\": -0.1278\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}/location",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}",
+										"location"
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Booking Tracking",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}/tracking",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}",
+										"tracking"
+									]
+								}
+							}
+						},
+						{
+							"name": "Add Message to Booking",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"message\": \"Driver is on the way to pickup location\",\n    \"type\": \"text\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/bookings/{{bookingId}}/messages",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"bookings",
+										"{{bookingId}}",
+										"messages"
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🚗 Vehicle Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Vehicles",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/vehicles?page=1&limit=20&status=active&category=delivery&sortBy=sortOrder&sortOrder=asc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "status",
+											"value": "active"
+										},
+										{
+											"key": "category",
+											"value": "delivery"
+										},
+										{
+											"key": "sortBy",
+											"value": "sortOrder"
+										},
+										{
+											"key": "sortOrder",
+											"value": "asc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Vehicle by ID",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/{{vehicleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"{{vehicleId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Vehicle Type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.vehicle && response.data.vehicle._id) {",
+											"        pm.collectionVariables.set('vehicleId', response.data.vehicle._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Small Van\",\n    \"description\": \"Perfect for small packages and documents\",\n    \"category\": \"delivery\",\n    \"pricing\": {\n        \"basePrice\": 5.00,\n        \"pricePerKm\": 1.50,\n        \"pricePerMinute\": 0.25,\n        \"minimumFare\": 8.00,\n        \"surgeMultiplier\": 1.0\n    },\n    \"capacity\": {\n        \"maxWeight\": 500,\n        \"maxVolume\": 2.5,\n        \"maxDimensions\": {\n            \"length\": 150,\n            \"width\": 100,\n            \"height\": 100\n        }\n    },\n    \"dimensions\": {\n        \"length\": 400,\n        \"width\": 180,\n        \"height\": 200\n    },\n    \"features\": [\"GPS Tracking\", \"Temperature Control\", \"Secure Storage\"],\n    \"isActive\": true,\n    \"isFeatured\": true,\n    \"sortOrder\": 1\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Vehicle Type",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Small Van Updated\",\n    \"description\": \"Updated description for small van\",\n    \"pricing\": {\n        \"basePrice\": 6.00,\n        \"pricePerKm\": 1.75\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/{{vehicleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"{{vehicleId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update Vehicle",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"isFeatured\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/{{vehicleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"{{vehicleId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Vehicle Type",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/{{vehicleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"{{vehicleId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Vehicle-Specific Operations",
+					"item": [
+						{
+							"name": "Update Vehicle Availability",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"isActive\": true,\n    \"availabilityZones\": [\"zone1\", \"zone2\", \"zone3\"],\n    \"timeSlots\": [\n        {\n            \"day\": \"monday\",\n            \"startTime\": \"09:00\",\n            \"endTime\": \"18:00\"\n        },\n        {\n            \"day\": \"tuesday\",\n            \"startTime\": \"09:00\",\n            \"endTime\": \"18:00\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/{{vehicleId}}/availability",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"{{vehicleId}}",
+										"availability"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Vehicle Pricing",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"basePrice\": 7.00,\n    \"pricePerKm\": 2.00,\n    \"pricePerMinute\": 0.30,\n    \"minimumFare\": 10.00,\n    \"surgeMultiplier\": 1.2\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/{{vehicleId}}/pricing",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"{{vehicleId}}",
+										"pricing"
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🎫 PromoCode Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Promo Codes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/promocodes?page=1&limit=20&status=active&discountType=percentage&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "status",
+											"value": "active"
+										},
+										{
+											"key": "discountType",
+											"value": "percentage"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Promo Code by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/promocodes/{{promoCodeId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes",
+										"{{promoCodeId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Promo Code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.promoCode && response.data.promoCode._id) {",
+											"        pm.collectionVariables.set('promoCodeId', response.data.promoCode._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"WELCOME20\",\n    \"name\": \"Welcome Discount\",\n    \"description\": \"20% off for new customers\",\n    \"discountType\": \"percentage\",\n    \"discountValue\": 20,\n    \"minimumOrderValue\": 10,\n    \"maximumDiscount\": 50,\n    \"validFrom\": \"2024-01-01T00:00:00.000Z\",\n    \"validUntil\": \"2024-12-31T23:59:59.999Z\",\n    \"usageLimit\": {\n        \"total\": 1000,\n        \"perUser\": 1\n    },\n    \"targetAudience\": {\n        \"userTypes\": [\"customer\"],\n        \"newUsersOnly\": true\n    },\n    \"applicableServices\": [\"delivery\", \"pickup\"],\n    \"isPublic\": true,\n    \"campaign\": {\n        \"type\": \"acquisition\",\n        \"name\": \"New Customer Welcome\"\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/promocodes",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Promo Code",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Updated Welcome Discount\",\n    \"description\": \"Updated 25% off for new customers\",\n    \"discountValue\": 25,\n    \"maximumDiscount\": 60\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/promocodes/{{promoCodeId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes",
+										"{{promoCodeId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update Promo Code",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"isPublic\": false\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/promocodes/{{promoCodeId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes",
+										"{{promoCodeId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Promo Code",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/promocodes/{{promoCodeId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes",
+										"{{promoCodeId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "PromoCode-Specific Operations",
+					"item": [
+						{
+							"name": "Validate Promo Code",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"WELCOME20\",\n    \"orderValue\": 50,\n    \"serviceType\": \"delivery\",\n    \"vehicleType\": \"{{vehicleId}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/promocodes/validate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes",
+										"validate"
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Applicable Promo Codes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/promocodes/applicable?orderValue=50&serviceType=delivery&vehicleType={{vehicleId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"promocodes",
+										"applicable"
+									],
+									"query": [
+										{
+											"key": "orderValue",
+											"value": "50"
+										},
+										{
+											"key": "serviceType",
+											"value": "delivery"
+										},
+										{
+											"key": "vehicleType",
+											"value": "{{vehicleId}}"
+										}
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "⭐ Review Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Reviews",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reviews?page=1&limit=20&reviewType=customer_to_driver&status=approved&rating=5&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "reviewType",
+											"value": "customer_to_driver"
+										},
+										{
+											"key": "status",
+											"value": "approved"
+										},
+										{
+											"key": "rating",
+											"value": "5"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Review by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Review",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.review && response.data.review._id) {",
+											"        pm.collectionVariables.set('reviewId', response.data.review._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"bookingId\": \"{{bookingId}}\",\n    \"revieweeId\": \"{{userId}}\",\n    \"reviewType\": \"customer_to_driver\",\n    \"rating\": 5,\n    \"review\": \"Excellent service! The driver was punctual and professional.\",\n    \"detailedRatings\": {\n        \"punctuality\": 5,\n        \"communication\": 5,\n        \"professionalism\": 5,\n        \"carHandling\": 5,\n        \"packageCondition\": 5\n    },\n    \"tags\": [\"excellent_service\", \"on_time\", \"professional\", \"friendly\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/reviews",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Review",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"rating\": 4,\n    \"review\": \"Updated review - Good service overall\",\n    \"detailedRatings\": {\n        \"punctuality\": 4,\n        \"communication\": 4,\n        \"professionalism\": 4\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update Review",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"review\": \"Patched review content\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Review",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Review-Specific Operations",
+					"item": [
+						{
+							"name": "Get User Rating Summary",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/reviews/user/{{userId}}/summary?reviewType=customer_to_driver",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"user",
+										"{{userId}}",
+										"summary"
+									],
+									"query": [
+										{
+											"key": "reviewType",
+											"value": "customer_to_driver"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Moderate Review",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"approved\",\n    \"moderationNotes\": \"Review approved after verification\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}/moderate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}",
+										"moderate"
+									]
+								}
+							}
+						},
+						{
+							"name": "Vote on Review",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"voteType\": \"helpful\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}/vote",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}",
+										"vote"
+									]
+								}
+							}
+						},
+						{
+							"name": "Add Review Response",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\": \"Thank you for your feedback! We appreciate your business.\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/reviews/{{reviewId}}/response",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"reviews",
+										"{{reviewId}}",
+										"response"
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🔔 Notification Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Notifications",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/notifications?page=1&limit=20&type=booking_update&status=sent&priority=normal&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "type",
+											"value": "booking_update"
+										},
+										{
+											"key": "status",
+											"value": "sent"
+										},
+										{
+											"key": "priority",
+											"value": "normal"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Notification by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/notifications/{{notificationId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"{{notificationId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Notification",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.notification && response.data.notification._id) {",
+											"        pm.collectionVariables.set('notificationId', response.data.notification._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"recipient\": \"{{userId}}\",\n    \"title\": \"Booking Update\",\n    \"message\": \"Your booking has been confirmed and a driver has been assigned.\",\n    \"type\": \"booking_update\",\n    \"priority\": \"normal\",\n    \"channels\": [\"push\", \"email\"],\n    \"relatedData\": {\n        \"booking\": \"{{bookingId}}\",\n        \"amount\": 25.50\n    },\n    \"action\": {\n        \"type\": \"open_booking\",\n        \"data\": {\n            \"bookingId\": \"{{bookingId}}\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/notifications",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Notification",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Updated Booking Notification\",\n    \"message\": \"Updated message content\",\n    \"priority\": \"high\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/notifications/{{notificationId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"{{notificationId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update Notification",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"priority\": \"urgent\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/notifications/{{notificationId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"{{notificationId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Notification",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/notifications/{{notificationId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"{{notificationId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Notification-Specific Operations",
+					"item": [
+						{
+							"name": "Get Notification Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/notifications/stats?userId={{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"stats"
+									],
+									"query": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Mark Notification as Read",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/notifications/{{notificationId}}/read",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"{{notificationId}}",
+										"read"
+									]
+								}
+							}
+						},
+						{
+							"name": "Mark All Notifications as Read",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/notifications/mark-all-read",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"notifications",
+										"mark-all-read"
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "📄 CMS Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All CMS Content",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/cms?page=1&limit=20&type=page&status=published&category=help&visibility=public&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "type",
+											"value": "page"
+										},
+										{
+											"key": "status",
+											"value": "published"
+										},
+										{
+											"key": "category",
+											"value": "help"
+										},
+										{
+											"key": "visibility",
+											"value": "public"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get CMS Content by ID/Slug",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/cms/{{cmsId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms",
+										"{{cmsId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create CMS Content",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.content && response.data.content._id) {",
+											"        pm.collectionVariables.set('cmsId', response.data.content._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"How to Book a Delivery\",\n    \"type\": \"page\",\n    \"language\": \"en\",\n    \"slug\": \"how-to-book-delivery\",\n    \"content\": {\n        \"html\": \"<h1>How to Book a Delivery</h1><p>Follow these simple steps to book your delivery...</p>\",\n        \"text\": \"How to Book a Delivery\\n\\nFollow these simple steps to book your delivery...\",\n        \"markdown\": \"# How to Book a Delivery\\n\\nFollow these simple steps to book your delivery...\"\n    },\n    \"excerpt\": \"Learn how to book a delivery with our step-by-step guide\",\n    \"metaTitle\": \"How to Book a Delivery - SendMe Logistics\",\n    \"metaDescription\": \"Step-by-step guide on how to book a delivery with SendMe Logistics\",\n    \"category\": \"help\",\n    \"tags\": [\"booking\", \"delivery\", \"guide\", \"help\"],\n    \"status\": \"published\",\n    \"visibility\": \"public\",\n    \"featuredImage\": \"https://example.com/images/booking-guide.jpg\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cms",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update CMS Content",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"Updated: How to Book a Delivery\",\n    \"content\": {\n        \"html\": \"<h1>Updated: How to Book a Delivery</h1><p>Updated content with new information...</p>\"\n    },\n    \"excerpt\": \"Updated guide on booking deliveries\",\n    \"changeLog\": \"Updated with latest booking process\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cms/{{cmsId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms",
+										"{{cmsId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update CMS Content",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"visibility\": \"private\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cms/{{cmsId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms",
+										"{{cmsId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete CMS Content",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/cms/{{cmsId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms",
+										"{{cmsId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "CMS-Specific Operations",
+					"item": [
+						{
+							"name": "Publish/Unpublish Content",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"published\",\n    \"publishAt\": \"2024-01-01T00:00:00.000Z\",\n    \"unpublishAt\": \"2024-12-31T23:59:59.999Z\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/cms/{{cmsId}}/publish",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"cms",
+										"{{cmsId}}",
+										"publish"
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🎫 Support Ticket Management",
+			"item": [
+				{
+					"name": "CRUD Operations",
+					"item": [
+						{
+							"name": "Get All Support Tickets",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/support?page=1&limit=20&status=open&priority=normal&category=booking_issue&department=operations&sortBy=createdAt&sortOrder=desc",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										},
+										{
+											"key": "status",
+											"value": "open"
+										},
+										{
+											"key": "priority",
+											"value": "normal"
+										},
+										{
+											"key": "category",
+											"value": "booking_issue"
+										},
+										{
+											"key": "department",
+											"value": "operations"
+										},
+										{
+											"key": "sortBy",
+											"value": "createdAt"
+										},
+										{
+											"key": "sortOrder",
+											"value": "desc"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Support Ticket by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Support Ticket",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const response = pm.response.json();",
+											"    if (response.data && response.data.ticket && response.data.ticket._id) {",
+											"        pm.collectionVariables.set('supportTicketId', response.data.ticket._id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subject\": \"Issue with my booking\",\n    \"description\": \"I'm having trouble with my recent booking. The driver hasn't arrived and I can't track the package.\",\n    \"category\": \"booking_issue\",\n    \"subcategory\": \"driver_not_found\",\n    \"priority\": \"high\",\n    \"urgency\": \"high\",\n    \"relatedBooking\": \"{{bookingId}}\",\n    \"contactInfo\": {\n        \"name\": \"John Doe\",\n        \"email\": \"john.doe@example.com\",\n        \"phone\": \"+447123456789\",\n        \"preferredContactMethod\": \"email\"\n    },\n    \"tags\": [\"urgent\", \"booking\", \"driver\"]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support"
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Support Ticket",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"subject\": \"Updated: Issue with my booking\",\n    \"description\": \"Updated description with more details about the issue\",\n    \"priority\": \"urgent\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Partial Update Support Ticket",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"priority\": \"urgent\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}"
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Support Ticket",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Support-Specific Operations",
+					"item": [
+						{
+							"name": "Get Support Statistics",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/support/stats?period=30d&department=operations&agentId={{userId}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"stats"
+									],
+									"query": [
+										{
+											"key": "period",
+											"value": "30d"
+										},
+										{
+											"key": "department",
+											"value": "operations"
+										},
+										{
+											"key": "agentId",
+											"value": "{{userId}}"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Tickets for Agent",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/support/agent/{{userId}}?status=open&priority=high&page=1&limit=20",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"agent",
+										"{{userId}}"
+									],
+									"query": [
+										{
+											"key": "status",
+											"value": "open"
+										},
+										{
+											"key": "priority",
+											"value": "high"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Assign Ticket to Agent",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"agentId\": \"{{userId}}\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}/assign",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}",
+										"assign"
+									]
+								}
+							}
+						},
+						{
+							"name": "Escalate Ticket",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"reason\": \"Complex issue requiring senior agent attention\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}/escalate",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}",
+										"escalate"
+									]
+								}
+							}
+						},
+						{
+							"name": "Resolve Ticket",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"summary\": \"Issue resolved by contacting the driver and providing updated tracking information\",\n    \"actions\": [\n        \"Contacted driver for status update\",\n        \"Provided customer with real-time tracking link\",\n        \"Confirmed delivery completion\"\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}/resolve",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}",
+										"resolve"
+									]
+								}
+							}
+						},
+						{
+							"name": "Reopen Ticket",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"reason\": \"Customer reported the issue is not fully resolved\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}/reopen",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}",
+										"reopen"
+									]
+								}
+							}
+						},
+						{
+							"name": "Add Message to Ticket",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"message\": \"Thank you for contacting support. We are investigating your issue and will update you shortly.\",\n    \"isInternal\": false,\n    \"attachments\": [\n        {\n            \"filename\": \"screenshot.png\",\n            \"url\": \"https://example.com/attachments/screenshot.png\",\n            \"type\": \"image\",\n            \"size\": 1024000\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/support/{{supportTicketId}}/messages",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"support",
+										"{{supportTicketId}}",
+										"messages"
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🌐 API Information",
+			"item": [
+				{
+					"name": "API Root",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					}
+				},
+				{
+					"name": "Health Check",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

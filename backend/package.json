@@ -46,6 +46,7 @@
     "moment": "^2.29.4",
     "redis": "^4.6.8",
     "express-validator": "^7.0.1",
+    "express-async-handler": "^1.2.0",
     "express-mongo-sanitize": "^2.2.0",
     "xss": "^1.0.14",
     "compression": "^1.7.4",

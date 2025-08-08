@@ -22,6 +22,16 @@ const customerRoutes = require('./routes/customer');
 const driverRoutes = require('./routes/driver');
 const adminRoutes = require('./routes/admin');
 
+// Import new model-specific routes
+const userRoutes = require('./routes/users');
+const bookingRoutes = require('./routes/bookings');
+const vehicleRoutes = require('./routes/vehicles');
+const promoCodeRoutes = require('./routes/promocodes');
+const reviewRoutes = require('./routes/reviews');
+const notificationRoutes = require('./routes/notifications');
+const cmsRoutes = require('./routes/cms');
+const supportRoutes = require('./routes/support');
+
 // Import utilities
 const logger = require('./utils/logger');
 
@@ -126,11 +136,22 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
     documentation: '/api/docs',
     endpoints: {
+      // Authentication & Role-based routes
       auth: '/api/auth',
       public: '/api/public',
       customer: '/api/customer',
       driver: '/api/driver',
-      admin: '/api/admin'
+      admin: '/api/admin',
+
+      // Model-specific CRUD routes
+      users: '/api/users',
+      bookings: '/api/bookings',
+      vehicles: '/api/vehicles',
+      promocodes: '/api/promocodes',
+      reviews: '/api/reviews',
+      notifications: '/api/notifications',
+      cms: '/api/cms',
+      support: '/api/support'
     }
   });
 });
@@ -144,6 +165,16 @@ app.use('/api/public', publicRoutes);
 app.use('/api/customer', customerRoutes);
 app.use('/api/driver', driverRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Model-specific API Routes
+app.use('/api/users', userRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/promocodes', promoCodeRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/cms', cmsRoutes);
+app.use('/api/support', supportRoutes);
 
 // Webhook endpoints (no rate limiting)
 app.post('/webhooks/stripe', express.raw({ type: 'application/json' }), (req, res) => {

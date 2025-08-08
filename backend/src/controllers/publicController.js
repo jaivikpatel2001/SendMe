@@ -108,10 +108,10 @@ const getHomeData = catchAsync(async (req, res, next) => {
 
   // Support information
   const support = {
-    phone: process.env.SUPPORT_PHONE || '+1-800-SENDME',
+    phone: process.env.SUPPORT_PHONE || '+44-800-SENDME',
     email: process.env.SUPPORT_EMAIL || 'support@sendmelogistics.com',
     hours: '24/7',
-    languages: ['English', 'Spanish', 'French']
+    languages: ['English']
   };
 
   logger.info('Home data requested', {

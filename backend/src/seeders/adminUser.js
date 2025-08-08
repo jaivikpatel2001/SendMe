@@ -10,7 +10,7 @@ const adminUserData = {
   firstName: 'Admin',
   lastName: 'User',
   email: 'admin@sendmelogistics.com',
-  phone: '+1234567890',
+  phone: '+447700900123',
   password: 'Admin@123456', // This will be hashed by the model
   role: 'admin',
   status: 'active',
@@ -21,22 +21,22 @@ const adminUserData = {
     {
       type: 'work',
       label: 'SendMe HQ',
-      address: '123 Business Ave, Suite 100',
-      city: 'New York',
-      state: 'NY',
-      country: 'US',
-      postalCode: '10001',
+      address: '25 Cabot Square, Canary Wharf',
+      city: 'London',
+      state: 'Greater London',
+      country: 'GB',
+      postalCode: 'E14 4QZ',
       coordinates: {
-        latitude: 40.7128,
-        longitude: -74.0060
+        latitude: 51.5074,
+        longitude: -0.1278
       },
       isDefault: true
     }
   ],
   preferences: {
     language: 'en',
-    currency: 'USD',
-    timezone: 'America/New_York',
+    currency: 'GBP',
+    timezone: 'Europe/London',
     notifications: {
       email: true,
       sms: true,

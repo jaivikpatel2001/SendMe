@@ -122,9 +122,9 @@ const seedSampleUsers = async () => {
     // Sample customers
     {
       firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      phone: '+1234567893',
+      lastName: 'Smith',
+      email: 'john.smith@example.com',
+      phone: '+447700900124',
       password: 'Customer@123',
       role: 'customer',
       status: 'active',
@@ -133,10 +133,10 @@ const seedSampleUsers = async () => {
       registrationSource: 'seeder'
     },
     {
-      firstName: 'Jane',
-      lastName: 'Smith',
-      email: 'jane.smith@example.com',
-      phone: '+1234567894',
+      firstName: 'Emma',
+      lastName: 'Johnson',
+      email: 'emma.johnson@example.com',
+      phone: '+447700900125',
       password: 'Customer@123',
       role: 'customer',
       status: 'active',
@@ -146,10 +146,10 @@ const seedSampleUsers = async () => {
     },
     // Sample drivers
     {
-      firstName: 'Mike',
-      lastName: 'Johnson',
-      email: 'mike.johnson@example.com',
-      phone: '+1234567895',
+      firstName: 'Michael',
+      lastName: 'Davies',
+      email: 'michael.davies@example.com',
+      phone: '+447700900126',
       password: 'Driver@123',
       role: 'driver',
       status: 'active',
@@ -157,7 +157,7 @@ const seedSampleUsers = async () => {
       isPhoneVerified: true,
       registrationSource: 'seeder',
       driverInfo: {
-        licenseNumber: 'DL123456789',
+        licenseNumber: 'DAVIE123456789',
         licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
         isOnline: false,
         rating: {
@@ -165,35 +165,35 @@ const seedSampleUsers = async () => {
           count: 150
         },
         earnings: {
-          total: 5000,
-          pending: 250,
-          withdrawn: 4750
+          total: 4000,
+          pending: 200,
+          withdrawn: 3800
         },
         vehicleDetails: {
-          make: 'Honda',
-          model: 'Civic',
+          make: 'Ford',
+          model: 'Transit',
           year: 2020,
-          color: 'Blue',
-          plateNumber: 'ABC123',
+          color: 'White',
+          plateNumber: 'MD20 ABC',
           registrationNumber: 'REG123456',
           registrationExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
           insuranceNumber: 'INS123456',
           insuranceExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
         },
         bankDetails: {
-          accountHolderName: 'Mike Johnson',
-          accountNumber: '1234567890',
-          bankName: 'Chase Bank',
-          routingNumber: '021000021',
-          accountType: 'checking'
+          accountHolderName: 'Michael Davies',
+          accountNumber: '12345678',
+          bankName: 'Barclays Bank',
+          sortCode: '20-00-00',
+          accountType: 'current'
         }
       }
     },
     {
       firstName: 'Sarah',
-      lastName: 'Wilson',
-      email: 'sarah.wilson@example.com',
-      phone: '+1234567896',
+      lastName: 'Williams',
+      email: 'sarah.williams@example.com',
+      phone: '+447700900127',
       password: 'Driver@123',
       role: 'driver',
       status: 'active',
@@ -201,7 +201,7 @@ const seedSampleUsers = async () => {
       isPhoneVerified: true,
       registrationSource: 'seeder',
       driverInfo: {
-        licenseNumber: 'DL987654321',
+        licenseNumber: 'WILLI987654321',
         licenseExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         isOnline: true,
         rating: {
@@ -209,32 +209,32 @@ const seedSampleUsers = async () => {
           count: 200
         },
         earnings: {
-          total: 7500,
-          pending: 350,
-          withdrawn: 7150
+          total: 6000,
+          pending: 280,
+          withdrawn: 5720
         },
         currentLocation: {
-          latitude: 40.7128,
-          longitude: -74.0060,
+          latitude: 53.4808,
+          longitude: -2.2426,
           lastUpdated: new Date()
         },
         vehicleDetails: {
-          make: 'Toyota',
-          model: 'Camry',
+          make: 'Vauxhall',
+          model: 'Vivaro',
           year: 2021,
-          color: 'White',
-          plateNumber: 'XYZ789',
+          color: 'Silver',
+          plateNumber: 'SW21 XYZ',
           registrationNumber: 'REG789012',
           registrationExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
           insuranceNumber: 'INS789012',
           insuranceExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
         },
         bankDetails: {
-          accountHolderName: 'Sarah Wilson',
-          accountNumber: '0987654321',
-          bankName: 'Bank of America',
-          routingNumber: '026009593',
-          accountType: 'checking'
+          accountHolderName: 'Sarah Williams',
+          accountNumber: '87654321',
+          bankName: 'HSBC Bank',
+          sortCode: '40-00-00',
+          accountType: 'current'
         }
       }
     }
@@ -276,8 +276,8 @@ const seedSamplePromoCodes = async () => {
       description: '10% off your first order',
       discountType: 'percentage',
       discountValue: 10,
-      maximumDiscount: 20,
-      minimumOrderValue: 10,
+      maximumDiscount: 15,
+      minimumOrderValue: 8,
       usageLimit: {
         total: 1000,
         perUser: 1
@@ -294,12 +294,12 @@ const seedSamplePromoCodes = async () => {
       createdBy: admin._id
     },
     {
-      code: 'SAVE5',
-      name: 'Save $5',
-      description: '$5 off orders over $25',
+      code: 'SAVE4',
+      name: 'Save £4',
+      description: '£4 off orders over £20',
       discountType: 'fixed',
-      discountValue: 5,
-      minimumOrderValue: 25,
+      discountValue: 4,
+      minimumOrderValue: 20,
       usageLimit: {
         total: 500,
         perUser: 3

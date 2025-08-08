@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Phone number is required'],
     unique: true,
     trim: true,
-    match: [/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number']
+    match: [/^\+44[1-9]\d{8,9}$|^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number (UK format preferred: +44...)']
   },
   password: {
     type: String,
@@ -116,7 +116,7 @@ const userSchema = new mongoose.Schema({
     country: {
       type: String,
       required: true,
-      default: process.env.DEFAULT_COUNTRY || 'US'
+      default: process.env.DEFAULT_COUNTRY || 'GB'
     },
     postalCode: String,
     coordinates: {
@@ -251,7 +251,7 @@ const userSchema = new mongoose.Schema({
     },
     currency: {
       type: String,
-      default: process.env.DEFAULT_CURRENCY || 'USD'
+      default: process.env.DEFAULT_CURRENCY || 'GBP'
     },
     notifications: {
       email: {

@@ -22,13 +22,13 @@ const vehicleTypesData = [
       fuelType: 'petrol'
     },
     pricing: {
-      baseFare: 3.00,
-      perKmRate: 0.50,
-      perMinuteRate: 0.10,
-      waitingChargePerMinute: 0.25,
-      minimumFare: 5.00,
-      cancellationFee: 2.00,
-      currency: 'USD'
+      baseFare: 2.50,
+      perKmRate: 0.40,
+      perMinuteRate: 0.08,
+      waitingChargePerMinute: 0.20,
+      minimumFare: 4.00,
+      cancellationFee: 1.50,
+      currency: 'GBP'
     },
     peakHourPricing: {
       enabled: true,
@@ -126,13 +126,13 @@ const vehicleTypesData = [
       fuelType: 'petrol'
     },
     pricing: {
-      baseFare: 5.00,
-      perKmRate: 1.00,
-      perMinuteRate: 0.15,
-      waitingChargePerMinute: 0.30,
-      minimumFare: 8.00,
-      cancellationFee: 3.00,
-      currency: 'USD'
+      baseFare: 4.00,
+      perKmRate: 0.80,
+      perMinuteRate: 0.12,
+      waitingChargePerMinute: 0.25,
+      minimumFare: 6.50,
+      cancellationFee: 2.50,
+      currency: 'GBP'
     },
     peakHourPricing: {
       enabled: true,
@@ -230,13 +230,13 @@ const vehicleTypesData = [
       fuelType: 'diesel'
     },
     pricing: {
-      baseFare: 15.00,
-      perKmRate: 2.50,
-      perMinuteRate: 0.25,
-      waitingChargePerMinute: 0.50,
-      minimumFare: 25.00,
-      cancellationFee: 10.00,
-      currency: 'USD'
+      baseFare: 12.00,
+      perKmRate: 2.00,
+      perMinuteRate: 0.20,
+      waitingChargePerMinute: 0.40,
+      minimumFare: 20.00,
+      cancellationFee: 8.00,
+      currency: 'GBP'
     },
     peakHourPricing: {
       enabled: true,
@@ -317,13 +317,13 @@ const vehicleTypesData = [
       fuelType: 'diesel'
     },
     pricing: {
-      baseFare: 30.00,
-      perKmRate: 4.00,
-      perMinuteRate: 0.50,
-      waitingChargePerMinute: 1.00,
-      minimumFare: 50.00,
-      cancellationFee: 20.00,
-      currency: 'USD'
+      baseFare: 24.00,
+      perKmRate: 3.20,
+      perMinuteRate: 0.40,
+      waitingChargePerMinute: 0.80,
+      minimumFare: 40.00,
+      cancellationFee: 16.00,
+      currency: 'GBP'
     },
     peakHourPricing: {
       enabled: false,
@@ -339,13 +339,13 @@ const vehicleTypesData = [
       isActive: true,
       serviceAreas: [
         {
-          city: 'New York',
-          state: 'NY',
-          country: 'US',
+          city: 'London',
+          state: 'Greater London',
+          country: 'GB',
           coordinates: {
             center: {
-              latitude: 40.7128,
-              longitude: -74.0060
+              latitude: 51.5074,
+              longitude: -0.1278
             },
             radius: 150
           }

@@ -240,7 +240,7 @@ const bookingSchema = new mongoose.Schema({
     },
     currency: {
       type: String,
-      default: process.env.DEFAULT_CURRENCY || 'USD'
+      default: process.env.DEFAULT_CURRENCY || 'GBP'
     }
   },
   

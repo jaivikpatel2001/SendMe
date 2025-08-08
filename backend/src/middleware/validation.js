@@ -69,10 +69,10 @@ const schemas = {
       }),
     
     phone: Joi.string()
-      .pattern(/^\+?[1-9]\d{1,14}$/)
+      .pattern(/^\+44[1-9]\d{8,9}$|^\+?[1-9]\d{1,14}$/)
       .required()
       .messages({
-        'string.pattern.base': 'Please provide a valid phone number',
+        'string.pattern.base': 'Please provide a valid phone number (UK format preferred: +44...)',
         'any.required': 'Phone number is required'
       }),
     
@@ -108,13 +108,13 @@ const schemas = {
 
   otpRequest: Joi.object({
     phone: Joi.string()
-      .pattern(/^\+?[1-9]\d{1,14}$/)
+      .pattern(/^\+44[1-9]\d{8,9}$|^\+?[1-9]\d{1,14}$/)
       .required()
   }),
 
   otpVerify: Joi.object({
     phone: Joi.string()
-      .pattern(/^\+?[1-9]\d{1,14}$/)
+      .pattern(/^\+44[1-9]\d{8,9}$|^\+?[1-9]\d{1,14}$/)
       .required(),
     
     otp: Joi.string()
@@ -153,7 +153,7 @@ const schemas = {
       }).required(),
       contactPerson: Joi.object({
         name: Joi.string().optional(),
-        phone: Joi.string().pattern(/^\+?[1-9]\d{1,14}$/).optional()
+        phone: Joi.string().pattern(/^\+44[1-9]\d{8,9}$|^\+?[1-9]\d{1,14}$/).optional()
       }).optional(),
       instructions: Joi.string().max(500).optional()
     }).required(),
@@ -166,7 +166,7 @@ const schemas = {
       }).required(),
       contactPerson: Joi.object({
         name: Joi.string().optional(),
-        phone: Joi.string().pattern(/^\+?[1-9]\d{1,14}$/).optional()
+        phone: Joi.string().pattern(/^\+44[1-9]\d{8,9}$|^\+?[1-9]\d{1,14}$/).optional()
       }).optional(),
       instructions: Joi.string().max(500).optional()
     }).required(),
@@ -232,8 +232,13 @@ const schemas = {
         address: Joi.string().required(),
         city: Joi.string().required(),
         state: Joi.string().required(),
-        country: Joi.string().default(process.env.DEFAULT_COUNTRY || 'US'),
-        postalCode: Joi.string().optional(),
+        country: Joi.string().default(process.env.DEFAULT_COUNTRY || 'GB'),
+        postalCode: Joi.string()
+          .pattern(/^(gir\s?0aa|[a-z]{1,2}\d[\da-z]?\s?(\d[a-z]{2})?)$/i)
+          .optional()
+          .messages({
+            'string.pattern.base': 'Please provide a valid UK postal code (e.g., SW1A 1AA, M1 1AA)'
+          }),
         coordinates: Joi.object({
           latitude: Joi.number().min(-90).max(90).optional(),
           longitude: Joi.number().min(-180).max(180).optional()

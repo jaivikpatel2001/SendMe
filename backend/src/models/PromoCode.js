@@ -141,7 +141,7 @@ const promoCodeSchema = new mongoose.Schema({
     state: String,
     country: {
       type: String,
-      default: process.env.DEFAULT_COUNTRY || 'US'
+      default: process.env.DEFAULT_COUNTRY || 'GB'
     },
     postalCodes: [String]
   }],

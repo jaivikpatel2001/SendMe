@@ -179,7 +179,7 @@ const calculateBaseFare = async (params) => {
   }
 
   // Additional charges for extra stops
-  const additionalStopCharge = additionalStops.length * 2.50; // $2.50 per additional stop
+  const additionalStopCharge = additionalStops.length * 2.00; // £2.00 per additional stop
 
   // Ensure minimum fare
   subtotal = Math.max(subtotal + additionalStopCharge, vehicleType.pricing.minimumFare);

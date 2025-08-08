@@ -93,7 +93,7 @@ const vehicleTypeSchema = new mongoose.Schema({
     },
     currency: {
       type: String,
-      default: process.env.DEFAULT_CURRENCY || 'USD'
+      default: process.env.DEFAULT_CURRENCY || 'GBP'
     }
   },
   
@@ -152,7 +152,7 @@ const vehicleTypeSchema = new mongoose.Schema({
       country: {
         type: String,
         required: true,
-        default: process.env.DEFAULT_COUNTRY || 'US'
+        default: process.env.DEFAULT_COUNTRY || 'GB'
       },
       postalCodes: [String],
       coordinates: {

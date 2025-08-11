@@ -16,9 +16,9 @@ const socketIo = require('socket.io');
 require('dotenv').config();
 
 // Import configurations and utilities
-const connectDB = require('./src/config/database');
+const { connectDB } = require('./src/config/database');
 const logger = require('./src/utils/logger');
-const errorHandler = require('./src/middleware/errorHandler');
+const { globalErrorHandler } = require('./src/middleware/errorHandler');
 
 // Import routes
 const authRoutes = require('./src/routes/auth');
@@ -42,8 +42,7 @@ const io = socketIo(server, {
 // Make io accessible to routes
 app.set('io', io);
 
-// Connect to MongoDB
-connectDB();
+// (DB connection is established before starting the server)
 
 // Security middleware
 app.use(helmet({
@@ -139,7 +138,7 @@ app.use('*', (req, res) => {
 });
 
 // Global error handler
-app.use(errorHandler);
+app.use(globalErrorHandler);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
@@ -189,10 +188,18 @@ process.on('SIGINT', () => {
   });
 });
 
-// Start server
+// Start server after successful DB connection
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  logger.info(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-});
+(async () => {
+  try {
+    await connectDB();
+    server.listen(PORT, () => {
+      logger.info(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+    });
+  } catch (err) {
+    logger.error('Failed to start server:', err);
+    process.exit(1);
+  }
+})();
 
 module.exports = app;

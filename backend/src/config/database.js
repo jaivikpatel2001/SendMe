@@ -28,7 +28,6 @@ const connectDB = async () => {
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
       family: 4, // Use IPv4, skip trying IPv6
       bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0, // Disable mongoose buffering
     };
 
     // Connect to MongoDB
@@ -57,7 +56,36 @@ const connectDB = async () => {
     });
 
   } catch (error) {
-    logger.error('Database connection failed:', error.message);
+    // Log detailed error and attempt a localhost -> 127.0.0.1 fallback for Windows DNS issues
+    const errMsg = error && error.message ? error.message : String(error);
+    logger.error(`Database connection failed: ${errMsg}`);
+
+    try {
+      const mongoURI = process.env.NODE_ENV === 'test'
+        ? process.env.MONGODB_TEST_URI
+        : process.env.MONGODB_URI;
+
+      if (mongoURI && mongoURI.includes('localhost')) {
+        const fallbackURI = mongoURI.replace('localhost', '127.0.0.1');
+        logger.warn(`Retrying MongoDB connection using 127.0.0.1 fallback: ${fallbackURI}`);
+        const conn = await mongoose.connect(fallbackURI, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+          maxPoolSize: 10,
+          serverSelectionTimeoutMS: 5000,
+          socketTimeoutMS: 45000,
+          family: 4,
+          bufferCommands: false,
+        });
+        logger.info(`MongoDB Connected (fallback): ${conn.connection.host}`);
+        return;
+      }
+    } catch (fallbackError) {
+      const fbMsg = fallbackError && fallbackError.message ? fallbackError.message : String(fallbackError);
+      logger.error(`Fallback MongoDB connection failed: ${fbMsg}`);
+    }
+
+    logger.error('Ensure MongoDB is running locally on port 27017, or update MONGODB_URI in backend/.env.');
     process.exit(1);
   }
 };

@@ -8,6 +8,7 @@ const { promisify } = require('util');
 const User = require('../models/User');
 const { AppError, catchAsync } = require('./errorHandler');
 const { verifyAccessToken, extractTokenFromHeader } = require('../utils/jwt');
+const { verifyIdToken } = require('../utils/firebaseAdmin');
 const logger = require('../utils/logger');
 
 /**
@@ -30,11 +31,54 @@ const protect = catchAsync(async (req, res, next) => {
   }
 
   try {
-    // 2) Verification token
-    const decoded = verifyAccessToken(token);
+    // 2a) Try verification with our JWT
+    let decoded = null;
+    try {
+      decoded = verifyAccessToken(token);
+    } catch (_) {
+      decoded = null;
+    }
 
-    // 3) Check if user still exists
-    const currentUser = await User.findById(decoded.id).select('+password');
+    let currentUser = null;
+
+    if (decoded && decoded.id) {
+      // 3) Check if user still exists (JWT path)
+      currentUser = await User.findById(decoded.id).select('+password');
+    } else {
+      // 2b) Try Firebase ID token verification
+      const firebaseDecoded = await verifyIdToken(token);
+      if (!firebaseDecoded) throw new AppError('Invalid token', 401);
+
+      // Find or create mapped user by firebase uid or email
+      const firebaseUid = firebaseDecoded.uid;
+      const email = firebaseDecoded.email;
+      currentUser = await User.findOne({
+        $or: [
+          { email },
+          { 'socialAuth.google.id': firebaseUid },
+          { 'socialAuth.facebook.id': firebaseUid }
+        ]
+      });
+
+      if (!currentUser) {
+        // Create a minimal user if not exists (assume customer)
+        const names = (firebaseDecoded.name || '').split(' ');
+        const firstName = names[0] || 'User';
+        const lastName = names.slice(1).join(' ') || 'Firebase';
+        currentUser = await User.create({
+          firstName,
+          lastName,
+          email: email || `user_${firebaseUid}@example.com`,
+          phone: firebaseDecoded.phone_number || `+${Date.now()}`,
+          socialAuth: firebaseDecoded.firebase?.sign_in_provider === 'google.com' ? { google: { id: firebaseUid, email } } : { facebook: { id: firebaseUid, email } },
+          isEmailVerified: !!firebaseDecoded.email_verified,
+          role: 'customer',
+          registrationSource: 'web'
+        });
+        currentUser.referralCode = `REF${currentUser._id.toString().slice(-8).toUpperCase()}`;
+        await currentUser.save({ validateBeforeSave: false });
+      }
+    }
     if (!currentUser) {
       logger.logSecurityEvent('token_user_not_found', {
         userId: decoded.id,
@@ -78,7 +122,7 @@ const protect = catchAsync(async (req, res, next) => {
     }
 
     // 7) Update last login time
-    currentUser.lastLogin = new Date();
+    currentUser.lastLogin = require('../utils/time').nowUTC();
     await currentUser.save({ validateBeforeSave: false });
 
     // Grant access to protected route
@@ -134,9 +178,25 @@ const optionalAuth = catchAsync(async (req, res, next) => {
 
   if (token) {
     try {
-      const decoded = verifyAccessToken(token);
-      const currentUser = await User.findById(decoded.id);
-      
+      let currentUser = null;
+      try {
+        const decoded = verifyAccessToken(token);
+        currentUser = await User.findById(decoded.id);
+      } catch (_) {
+        const firebaseDecoded = await verifyIdToken(token);
+        if (firebaseDecoded) {
+          const firebaseUid = firebaseDecoded.uid;
+          const email = firebaseDecoded.email;
+          currentUser = await User.findOne({
+            $or: [
+              { email },
+              { 'socialAuth.google.id': firebaseUid },
+              { 'socialAuth.facebook.id': firebaseUid }
+            ]
+          });
+        }
+      }
+
       if (currentUser && currentUser.status === 'active' && !currentUser.isLocked) {
         req.user = currentUser;
         req.token = token;

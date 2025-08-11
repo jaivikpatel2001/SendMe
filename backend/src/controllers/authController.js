@@ -9,6 +9,7 @@ const { AppError, catchAsync } = require('../middleware/errorHandler');
 const { generateTokenPair, generateOTPToken, verifyOTPToken, refreshAccessToken, blacklistToken } = require('../utils/jwt');
 const { generateOTP, sendOTP, validatePhoneNumber, formatPhoneNumber } = require('../utils/sms');
 const logger = require('../utils/logger');
+const { verifyIdToken } = require('../utils/firebaseAdmin');
 
 /**
  * Register a new user
@@ -364,22 +365,32 @@ const logout = catchAsync(async (req, res, next) => {
  * @access Public
  */
 const socialLogin = catchAsync(async (req, res, next) => {
-  const { provider, token, userData } = req.body;
-
-  if (!['google', 'facebook'].includes(provider)) {
-    return next(new AppError('Invalid social provider', 400));
+  // Accept either { provider, token } or { idToken }
+  const idToken = req.body.idToken || req.body.token;
+  if (!idToken) {
+    return next(new AppError('Firebase ID token is required', 400));
   }
 
-  // Here you would verify the token with the respective provider
-  // For now, we'll assume the token is valid and userData is provided
+  const decoded = await verifyIdToken(idToken);
+  if (!decoded) {
+    return next(new AppError('Invalid Firebase ID token', 401));
+  }
 
-  const { email, firstName, lastName, socialId } = userData;
+  const signInProvider = decoded.firebase?.sign_in_provider; // 'google.com' | 'facebook.com' | ...
+  const provider = req.body.provider || (signInProvider === 'google.com' ? 'google' : signInProvider === 'facebook.com' ? 'facebook' : 'google');
+
+  const email = decoded.email;
+  const firebaseUid = decoded.uid;
+  const name = decoded.name || '';
+  const names = name.split(' ');
+  const firstName = names[0] || 'User';
+  const lastName = names.slice(1).join(' ') || 'Firebase';
 
   // Find or create user
   let user = await User.findOne({
     $or: [
       { email },
-      { [`socialAuth.${provider}.id`]: socialId }
+      { [`socialAuth.${provider}.id`]: firebaseUid }
     ]
   });
 
@@ -388,15 +399,15 @@ const socialLogin = catchAsync(async (req, res, next) => {
     user = await User.create({
       firstName,
       lastName,
-      email,
-      phone: `+${Date.now()}`, // Temporary phone
+      email: email || `user_${firebaseUid}@example.com`,
+      phone: decoded.phone_number || `+${Date.now()}`,
       socialAuth: {
         [provider]: {
-          id: socialId,
+          id: firebaseUid,
           email
         }
       },
-      isEmailVerified: true,
+      isEmailVerified: !!decoded.email_verified,
       role: 'customer',
       registrationSource: 'web'
     });
@@ -407,7 +418,7 @@ const socialLogin = catchAsync(async (req, res, next) => {
 
     logger.logAuthEvent('user_registered_via_social', {
       userId: user._id,
-      email,
+      email: user.email,
       provider,
       ip: req.ip
     });
@@ -415,7 +426,7 @@ const socialLogin = catchAsync(async (req, res, next) => {
     // Update social auth info if needed
     if (!user.socialAuth[provider]) {
       user.socialAuth[provider] = {
-        id: socialId,
+        id: firebaseUid,
         email
       };
       await user.save({ validateBeforeSave: false });
@@ -426,7 +437,7 @@ const socialLogin = catchAsync(async (req, res, next) => {
 
     logger.logAuthEvent('user_logged_in_via_social', {
       userId: user._id,
-      email,
+      email: user.email,
       provider,
       ip: req.ip
     });
@@ -444,6 +455,9 @@ const socialLogin = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+// Firebase-specific login endpoint (alias)
+const firebaseLogin = socialLogin;
 
 /**
  * Get current user profile
@@ -469,5 +483,6 @@ module.exports = {
   refreshToken,
   logout,
   socialLogin,
+  firebaseLogin,
   getMe
 };

@@ -98,6 +98,23 @@
 			"name": "🔐 Authentication",
 			"item": [
 				{
+					"name": "Firebase Login (Google/Facebook)",
+						"request": {
+							"auth": { "type": "noauth" },
+							"method": "POST",
+							"header": [ { "key": "Content-Type", "value": "application/json" } ],
+							"body": {
+								"mode": "raw",
+								"raw": "{\n  \"idToken\": \"<firebase-id-token>\"\n}"
+							},
+							"url": {
+								"raw": "{{baseUrl}}/auth/firebase-login",
+								"host": ["{{baseUrl}}"],
+								"path": ["auth", "firebase-login"]
+							}
+						}
+					},
+					{
 					"name": "Register User",
 					"event": [
 						{

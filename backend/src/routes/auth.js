@@ -12,6 +12,7 @@ const {
   refreshToken,
   logout,
   socialLogin,
+  firebaseLogin,
   getMe
 } = require('../controllers/authController');
 
@@ -69,6 +70,13 @@ router.post('/refresh-token', validateRefreshToken, refreshToken);
  * @access  Public
  */
 router.post('/social-login', authLimiter, socialLogin);
+
+/**
+ * @route   POST /api/auth/firebase-login
+ * @desc    Login using Firebase ID token (Google/Facebook)
+ * @access  Public
+ */
+router.post('/firebase-login', authLimiter, firebaseLogin);
 
 /**
  * @route   POST /api/auth/logout

@@ -39,7 +39,7 @@ A comprehensive multi-role logistics and delivery booking platform backend built
 - **File Upload**: Multer + Cloudinary
 - **Email**: Nodemailer
 - **SMS**: Twilio
-- **Push Notifications**: Firebase Admin SDK
+- **Push Notifications & Social Auth**: Firebase Admin SDK (push) and Firebase Authentication (Google/Facebook)
 - **Payments**: Stripe
 - **Maps**: Google Maps API
 - **Logging**: Winston
@@ -245,13 +245,18 @@ CLOUDINARY_API_KEY=your-cloudinary-api-key
 CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 ```
 
-### Push Notifications (Firebase)
+### Firebase (Push + Authentication)
 ```env
+# Option 1: Service account JSON path (recommended in dev)
+FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json
+
+# Option 2: Inline credentials (escape newlines)
 FIREBASE_PROJECT_ID=your-firebase-project-id
-FIREBASE_PRIVATE_KEY_ID=your-firebase-private-key-id
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nyour-key\n-----END PRIVATE KEY-----\n"
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nyour-key\n-----END PRIVATE KEY-----\n"
 ```
+
+Supported providers: Google and Facebook via Firebase Authentication. The backend verifies Firebase ID tokens and maps users to local accounts while continuing to support JWT-based email/password authentication.
 
 ### Optional Services
 ```env

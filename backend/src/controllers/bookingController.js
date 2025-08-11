@@ -7,7 +7,7 @@ const Booking = require('../models/Booking');
 const User = require('../models/User');
 const Vehicle = require('../models/Vehicle');
 const PromoCode = require('../models/PromoCode');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 const { calculateDistance } = require('../utils/distance');
@@ -18,7 +18,7 @@ const { calculatePricing } = require('../utils/pricing');
  * @route   GET /api/bookings
  * @access  Admin, Customer (own bookings), Driver (assigned bookings)
  */
-const getBookings = asyncHandler(async (req, res) => {
+const getBookings = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -48,11 +48,12 @@ const getBookings = asyncHandler(async (req, res) => {
   if (customerId && req.user.role === 'admin') query.customer = customerId;
   if (driverId && req.user.role === 'admin') query.driver = driverId;
 
-  // Date range filter
+  // Date range filter (UTC)
   if (startDate || endDate) {
+    const { parseDateToUTCStart, parseDateToUTCEnd } = require('../utils/time');
     query.createdAt = {};
-    if (startDate) query.createdAt.$gte = new Date(startDate);
-    if (endDate) query.createdAt.$lte = new Date(endDate);
+    if (startDate) query.createdAt.$gte = parseDateToUTCStart(startDate);
+    if (endDate) query.createdAt.$lte = parseDateToUTCEnd(endDate);
   }
 
   // Search functionality
@@ -101,7 +102,7 @@ const getBookings = asyncHandler(async (req, res) => {
  * @route   GET /api/bookings/:id
  * @access  Admin, Customer (own booking), Driver (assigned booking)
  */
-const getBookingById = asyncHandler(async (req, res) => {
+const getBookingById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const booking = await Booking.findById(id)
@@ -140,7 +141,7 @@ const getBookingById = asyncHandler(async (req, res) => {
  * @route   POST /api/bookings
  * @access  Customer, Admin
  */
-const createBooking = asyncHandler(async (req, res) => {
+const createBooking = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -221,7 +222,7 @@ const createBooking = asyncHandler(async (req, res) => {
     vehicleType,
     pickupLocation,
     dropLocation,
-    scheduledFor: scheduledFor || new Date(),
+    scheduledFor: scheduledFor ? require('../utils/time').parseDateToUTCStart(scheduledFor) : new Date(),
     packageDetails,
     specialInstructions,
     addOns,
@@ -266,7 +267,7 @@ const createBooking = asyncHandler(async (req, res) => {
  * @route   PUT /api/bookings/:id
  * @access  Admin, Customer (before driver assigned)
  */
-const updateBooking = asyncHandler(async (req, res) => {
+const updateBooking = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -323,7 +324,7 @@ const updateBooking = asyncHandler(async (req, res) => {
  * @route   PATCH /api/bookings/:id
  * @access  Admin, Customer (before driver assigned)
  */
-const patchBooking = asyncHandler(async (req, res) => {
+const patchBooking = catchAsync(async (req, res) => {
   // Use the same logic as updateBooking for PATCH
   await updateBooking(req, res);
 });
@@ -333,7 +334,7 @@ const patchBooking = asyncHandler(async (req, res) => {
  * @route   DELETE /api/bookings/:id
  * @access  Admin, Customer, Driver
  */
-const cancelBooking = asyncHandler(async (req, res) => {
+const cancelBooking = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { reason } = req.body;
 
@@ -404,7 +405,7 @@ const cancelBooking = asyncHandler(async (req, res) => {
  * @route   PATCH /api/bookings/:id/status
  * @access  Admin, Driver (assigned bookings)
  */
-const updateBookingStatus = asyncHandler(async (req, res) => {
+const updateBookingStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { status, notes } = req.body;
 
@@ -478,7 +479,7 @@ const updateBookingStatus = asyncHandler(async (req, res) => {
  * @route   PATCH /api/bookings/:id/assign-driver
  * @access  Admin only
  */
-const assignDriver = asyncHandler(async (req, res) => {
+const assignDriver = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { driverId } = req.body;
 
@@ -534,7 +535,7 @@ const assignDriver = asyncHandler(async (req, res) => {
  * @route   PATCH /api/bookings/:id/location
  * @access  Driver (assigned to booking)
  */
-const updateBookingLocation = asyncHandler(async (req, res) => {
+const updateBookingLocation = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { latitude, longitude } = req.body;
 
@@ -578,7 +579,7 @@ const updateBookingLocation = asyncHandler(async (req, res) => {
  * @route   GET /api/bookings/:id/tracking
  * @access  Customer (own booking), Driver (assigned booking), Admin
  */
-const getBookingTracking = asyncHandler(async (req, res) => {
+const getBookingTracking = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const booking = await Booking.findById(id)
@@ -623,7 +624,7 @@ const getBookingTracking = asyncHandler(async (req, res) => {
  * @route   POST /api/bookings/:id/messages
  * @access  Customer (own booking), Driver (assigned booking), Admin
  */
-const addBookingMessage = asyncHandler(async (req, res) => {
+const addBookingMessage = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { message, type = 'text' } = req.body;
 

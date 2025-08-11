@@ -13,6 +13,7 @@ const Notification = require('../models/Notification');
 const { AppError, catchAsync } = require('../middleware/errorHandler');
 const logger = require('../utils/logger');
 const { sendDriverApproval } = require('../utils/email');
+const time = require('../utils/time');
 
 /**
  * Get admin dashboard statistics
@@ -20,15 +21,13 @@ const { sendDriverApproval } = require('../utils/email');
  * @access Private (Admin)
  */
 const getDashboard = catchAsync(async (req, res, next) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+  const todayStart = time.startOfUTCDay();
+  const todayEnd = time.endOfUTCDay();
 
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - today.getDay());
+  const weekStart = new Date(todayStart);
+  weekStart.setUTCDate(todayStart.getUTCDate() - todayStart.getUTCDay());
 
-  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthStart = new Date(Date.UTC(todayStart.getUTCFullYear(), todayStart.getUTCMonth(), 1));
 
   // Get overall statistics
   const [
@@ -93,11 +92,9 @@ const getDashboard = catchAsync(async (req, res, next) => {
   // Get daily bookings for the last 7 days
   const last7Days = [];
   for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
-    const nextDate = new Date(date);
-    nextDate.setDate(nextDate.getDate() + 1);
-    
+    const date = time.startOfUTCDay(new Date(Date.now() - i * 24 * 60 * 60 * 1000));
+    const nextDate = time.endOfUTCDay(date);
+
     const count = await Booking.countDocuments({
       createdAt: { $gte: date, $lt: nextDate }
     });
@@ -307,8 +304,8 @@ const getBookings = catchAsync(async (req, res, next) => {
   
   if (startDate || endDate) {
     query.createdAt = {};
-    if (startDate) query.createdAt.$gte = new Date(startDate);
-    if (endDate) query.createdAt.$lte = new Date(endDate);
+    if (startDate) query.createdAt.$gte = time.parseDateToUTCStart(startDate);
+    if (endDate) query.createdAt.$lte = time.parseDateToUTCEnd(endDate);
   }
 
   // Pagination
@@ -569,26 +566,23 @@ const getAnalytics = catchAsync(async (req, res, next) => {
   const { period = 'monthly', startDate, endDate } = req.query;
 
   let dateFilter = {};
-  const now = new Date();
+  const now = time.nowUTC();
 
   switch (period) {
     case 'daily':
-      const today = new Date(now);
-      today.setHours(0, 0, 0, 0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      dateFilter = { createdAt: { $gte: today, $lt: tomorrow } };
+      const todayStart = time.startOfUTCDay(now);
+      const todayEnd = time.endOfUTCDay(now);
+      dateFilter = { createdAt: { $gte: todayStart, $lt: todayEnd } };
       break;
 
     case 'weekly':
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay());
-      weekStart.setHours(0, 0, 0, 0);
+      const weekStart = time.startOfUTCDay(now);
+      weekStart.setUTCDate(weekStart.getUTCDate() - weekStart.getUTCDay());
       dateFilter = { createdAt: { $gte: weekStart } };
       break;
 
     case 'monthly':
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
       dateFilter = { createdAt: { $gte: monthStart } };
       break;
 
@@ -596,8 +590,8 @@ const getAnalytics = catchAsync(async (req, res, next) => {
       if (startDate && endDate) {
         dateFilter = {
           createdAt: {
-            $gte: new Date(startDate),
-            $lte: new Date(endDate)
+            $gte: time.parseDateToUTCStart(startDate),
+            $lte: time.parseDateToUTCEnd(endDate)
           }
         };
       }
@@ -792,7 +786,7 @@ const getSystemHealth = catchAsync(async (req, res, next) => {
       system: systemMetrics,
       externalServices,
       recentErrors,
-      timestamp: new Date().toISOString()
+      timestamp: time.nowUTC().toISOString()
     }
   });
 });

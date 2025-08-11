@@ -5,7 +5,7 @@
 
 const Notification = require('../models/Notification');
 const User = require('../models/User');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
@@ -14,7 +14,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/notifications
  * @access  Admin, User (own notifications)
  */
-const getNotifications = asyncHandler(async (req, res) => {
+const getNotifications = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -87,7 +87,7 @@ const getNotifications = asyncHandler(async (req, res) => {
  * @route   GET /api/notifications/:id
  * @access  Admin, Recipient
  */
-const getNotificationById = asyncHandler(async (req, res) => {
+const getNotificationById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const notification = await Notification.findById(id)
@@ -124,7 +124,7 @@ const getNotificationById = asyncHandler(async (req, res) => {
  * @route   POST /api/notifications
  * @access  Admin only
  */
-const createNotification = asyncHandler(async (req, res) => {
+const createNotification = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -168,7 +168,7 @@ const createNotification = asyncHandler(async (req, res) => {
  * @route   PUT /api/notifications/:id
  * @access  Admin only
  */
-const updateNotification = asyncHandler(async (req, res) => {
+const updateNotification = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -209,7 +209,7 @@ const updateNotification = asyncHandler(async (req, res) => {
  * @route   PATCH /api/notifications/:id
  * @access  Admin only
  */
-const patchNotification = asyncHandler(async (req, res) => {
+const patchNotification = catchAsync(async (req, res) => {
   // Use the same logic as updateNotification for PATCH
   await updateNotification(req, res);
 });
@@ -219,7 +219,7 @@ const patchNotification = asyncHandler(async (req, res) => {
  * @route   DELETE /api/notifications/:id
  * @access  Admin only
  */
-const deleteNotification = asyncHandler(async (req, res) => {
+const deleteNotification = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const notification = await Notification.findById(id);
@@ -246,7 +246,7 @@ const deleteNotification = asyncHandler(async (req, res) => {
  * @route   PATCH /api/notifications/:id/read
  * @access  Recipient only
  */
-const markAsRead = asyncHandler(async (req, res) => {
+const markAsRead = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const notification = await Notification.findById(id);
@@ -290,7 +290,7 @@ const markAsRead = asyncHandler(async (req, res) => {
  * @route   PATCH /api/notifications/mark-all-read
  * @access  Authenticated users
  */
-const markAllAsRead = asyncHandler(async (req, res) => {
+const markAllAsRead = catchAsync(async (req, res) => {
   const result = await Notification.updateMany(
     {
       recipient: req.user._id,
@@ -318,7 +318,7 @@ const markAllAsRead = asyncHandler(async (req, res) => {
  * @route   GET /api/notifications/stats
  * @access  Authenticated users
  */
-const getNotificationStats = asyncHandler(async (req, res) => {
+const getNotificationStats = catchAsync(async (req, res) => {
   const userId = req.user.role === 'admin' && req.query.userId ? req.query.userId : req.user._id;
 
   const stats = await Notification.aggregate([

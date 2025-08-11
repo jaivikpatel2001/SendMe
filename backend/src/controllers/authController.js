@@ -142,7 +142,7 @@ const login = catchAsync(async (req, res, next) => {
   const tokens = generateTokenPair(user._id, user.role);
 
   // Update last login
-  user.lastLogin = new Date();
+  user.lastLogin = require('../utils/time').nowUTC();
   await user.save({ validateBeforeSave: false });
 
   // Remove password from output
@@ -270,7 +270,7 @@ const verifyOTP = catchAsync(async (req, res, next) => {
   } else {
     // Update phone verification status
     user.isPhoneVerified = true;
-    user.lastLogin = new Date();
+    user.lastLogin = require('../utils/time').nowUTC();
     await user.save({ validateBeforeSave: false });
 
     logger.logAuthEvent('user_logged_in_via_otp', {
@@ -421,7 +421,7 @@ const socialLogin = catchAsync(async (req, res, next) => {
       await user.save({ validateBeforeSave: false });
     }
 
-    user.lastLogin = new Date();
+    user.lastLogin = require('../utils/time').nowUTC();
     await user.save({ validateBeforeSave: false });
 
     logger.logAuthEvent('user_logged_in_via_social', {

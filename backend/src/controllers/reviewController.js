@@ -6,7 +6,7 @@
 const Review = require('../models/Review');
 const Booking = require('../models/Booking');
 const User = require('../models/User');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
@@ -15,7 +15,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/reviews
  * @access  Admin, Customer (own reviews), Driver (own reviews)
  */
-const getReviews = asyncHandler(async (req, res) => {
+const getReviews = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -92,7 +92,7 @@ const getReviews = asyncHandler(async (req, res) => {
  * @route   GET /api/reviews/:id
  * @access  Admin, Reviewer, Reviewee
  */
-const getReviewById = asyncHandler(async (req, res) => {
+const getReviewById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const review = await Review.findById(id)
@@ -131,7 +131,7 @@ const getReviewById = asyncHandler(async (req, res) => {
  * @route   POST /api/reviews
  * @access  Customer, Driver
  */
-const createReview = asyncHandler(async (req, res) => {
+const createReview = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -228,7 +228,7 @@ const createReview = asyncHandler(async (req, res) => {
  * @route   PUT /api/reviews/:id
  * @access  Reviewer (own review), Admin
  */
-const updateReview = asyncHandler(async (req, res) => {
+const updateReview = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -290,7 +290,7 @@ const updateReview = asyncHandler(async (req, res) => {
  * @route   PATCH /api/reviews/:id
  * @access  Reviewer (own review), Admin
  */
-const patchReview = asyncHandler(async (req, res) => {
+const patchReview = catchAsync(async (req, res) => {
   // Use the same logic as updateReview for PATCH
   await updateReview(req, res);
 });
@@ -300,7 +300,7 @@ const patchReview = asyncHandler(async (req, res) => {
  * @route   DELETE /api/reviews/:id
  * @access  Admin only
  */
-const deleteReview = asyncHandler(async (req, res) => {
+const deleteReview = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const review = await Review.findById(id);
@@ -346,7 +346,7 @@ const updateUserRating = async (userId, reviewType) => {
  * @route   PATCH /api/reviews/:id/moderate
  * @access  Admin only
  */
-const moderateReview = asyncHandler(async (req, res) => {
+const moderateReview = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { status, moderationNotes } = req.body;
 
@@ -389,7 +389,7 @@ const moderateReview = asyncHandler(async (req, res) => {
  * @route   POST /api/reviews/:id/vote
  * @access  Authenticated users
  */
-const voteOnReview = asyncHandler(async (req, res) => {
+const voteOnReview = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { voteType } = req.body;
 
@@ -434,7 +434,7 @@ const voteOnReview = asyncHandler(async (req, res) => {
  * @route   POST /api/reviews/:id/response
  * @access  Reviewee only
  */
-const addReviewResponse = asyncHandler(async (req, res) => {
+const addReviewResponse = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { content } = req.body;
 
@@ -481,7 +481,7 @@ const addReviewResponse = asyncHandler(async (req, res) => {
  * @route   GET /api/reviews/user/:userId/summary
  * @access  Public
  */
-const getUserRatingSummary = asyncHandler(async (req, res) => {
+const getUserRatingSummary = catchAsync(async (req, res) => {
   const { userId } = req.params;
   const { reviewType = 'customer_to_driver' } = req.query;
 

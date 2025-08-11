@@ -18,7 +18,7 @@ const {
   getNearbyDrivers
 } = require('../controllers/userController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -32,7 +32,7 @@ router.use(protect);
  * @access  Admin only
  */
 router.get('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
     query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
@@ -50,7 +50,7 @@ router.get('/',
  * @access  Admin, Customer
  */
 router.get('/drivers/nearby',
-  authorize('admin', 'customer'),
+  restrictTo('admin', 'customer'),
   [
     query('latitude').notEmpty().isFloat({ min: -90, max: 90 }).withMessage('Valid latitude is required'),
     query('longitude').notEmpty().isFloat({ min: -180, max: 180 }).withMessage('Valid longitude is required'),
@@ -78,7 +78,7 @@ router.get('/:id',
  * @access  Admin only
  */
 router.post('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     body('firstName')
       .trim()
@@ -169,7 +169,7 @@ router.patch('/:id',
  * @access  Admin only
  */
 router.patch('/:id/status',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid user ID'),
     body('status')
@@ -190,7 +190,7 @@ router.patch('/:id/status',
  * @access  Driver only (own location)
  */
 router.patch('/:id/location',
-  authorize('driver'),
+  restrictTo('driver'),
   [
     param('id').isMongoId().withMessage('Invalid user ID'),
     body('latitude')
@@ -209,7 +209,7 @@ router.patch('/:id/location',
  * @access  Driver only (own status)
  */
 router.patch('/:id/online-status',
-  authorize('driver'),
+  restrictTo('driver'),
   [
     param('id').isMongoId().withMessage('Invalid user ID'),
     body('isOnline')
@@ -225,7 +225,7 @@ router.patch('/:id/online-status',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid user ID')
   ],

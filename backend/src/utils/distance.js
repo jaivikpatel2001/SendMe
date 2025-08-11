@@ -444,7 +444,7 @@ const getEstimatedArrival = async (driverLocation, pickupLocation) => {
       distance: routeInfo.distance,
       duration: routeInfo.duration,
       arrivalTime,
-      formattedArrival: arrivalTime.toLocaleTimeString()
+      formattedArrival: arrivalTime.toISOString()
     };
 
   } catch (error) {
@@ -461,7 +461,7 @@ const getEstimatedArrival = async (driverLocation, pickupLocation) => {
       distance: { km: distance, text: `${distance.toFixed(1)} km` },
       duration: { minutes: estimatedMinutes, text: `${estimatedMinutes} mins` },
       arrivalTime,
-      formattedArrival: arrivalTime.toLocaleTimeString(),
+      formattedArrival: arrivalTime.toISOString(),
       fallback: true
     };
   }

@@ -4,14 +4,14 @@ This directory contains a comprehensive Postman collection for testing the SendM
 
 ## 📁 Files
 
-- `SendMe-Logistics-API.postman_collection.json` - Complete API collection with integrated variables
+- `SendMe_Logistics_Complete_API.postman_collection.json` - Complete API collection with integrated variables
 
 ## 🚀 Quick Setup
 
 ### 1. Import Collection
 1. Open Postman
 2. Click "Import" button
-3. Select `SendMe-Logistics-API.postman_collection.json`
+3. Select `SendMe_Logistics_Complete_API.postman_collection.json`
 4. The collection will be imported with all variables included
 
 ### 2. Start the Server
@@ -107,7 +107,8 @@ Password: Driver@123
 - **Auto-refresh**: Collection can be extended to auto-refresh expired tokens
 
 ### Variable Management
-- **base_url**: API server URL (default: http://localhost:5000)
+- **serverUrl**: Server URL (default: http://localhost:5000)
+- **baseUrl**: API base (defaults to {{serverUrl}}/api)
 - **access_token**: JWT access token (auto-populated)
 - **refresh_token**: JWT refresh token (auto-populated)
 - **user_id**: Current user ID (auto-populated)
@@ -206,5 +207,6 @@ Password: Driver@123
 ## 📚 Additional Resources
 
 - [Backend README](../README.md) - Complete backend documentation
-- [API Documentation](http://localhost:5000/api) - Live API documentation
+- [API Root](http://localhost:5000/api) - API root listing endpoints
+- [Health](http://localhost:5000/health) - Health check
 - [Postman Documentation](https://learning.postman.com/) - Learn more about Postman features

@@ -5,7 +5,7 @@
 
 const Vehicle = require('../models/Vehicle');
 const Booking = require('../models/Booking');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
@@ -14,7 +14,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/vehicles
  * @access  Public
  */
-const getVehicles = asyncHandler(async (req, res) => {
+const getVehicles = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -78,7 +78,7 @@ const getVehicles = asyncHandler(async (req, res) => {
  * @route   GET /api/vehicles/:id
  * @access  Public
  */
-const getVehicleById = asyncHandler(async (req, res) => {
+const getVehicleById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const vehicle = await Vehicle.findById(id);
@@ -107,7 +107,7 @@ const getVehicleById = asyncHandler(async (req, res) => {
  * @route   POST /api/vehicles
  * @access  Admin only
  */
-const createVehicle = asyncHandler(async (req, res) => {
+const createVehicle = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -149,7 +149,7 @@ const createVehicle = asyncHandler(async (req, res) => {
  * @route   PUT /api/vehicles/:id
  * @access  Admin only
  */
-const updateVehicle = asyncHandler(async (req, res) => {
+const updateVehicle = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -199,7 +199,7 @@ const updateVehicle = asyncHandler(async (req, res) => {
  * @route   PATCH /api/vehicles/:id
  * @access  Admin only
  */
-const patchVehicle = asyncHandler(async (req, res) => {
+const patchVehicle = catchAsync(async (req, res) => {
   // Use the same logic as updateVehicle for PATCH
   await updateVehicle(req, res);
 });
@@ -209,7 +209,7 @@ const patchVehicle = asyncHandler(async (req, res) => {
  * @route   DELETE /api/vehicles/:id
  * @access  Admin only
  */
-const deleteVehicle = asyncHandler(async (req, res) => {
+const deleteVehicle = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const vehicle = await Vehicle.findById(id);
@@ -252,7 +252,7 @@ const deleteVehicle = asyncHandler(async (req, res) => {
  * @route   PATCH /api/vehicles/:id/availability
  * @access  Admin only
  */
-const updateVehicleAvailability = asyncHandler(async (req, res) => {
+const updateVehicleAvailability = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { isActive, availabilityZones, timeSlots } = req.body;
 
@@ -291,7 +291,7 @@ const updateVehicleAvailability = asyncHandler(async (req, res) => {
  * @route   PATCH /api/vehicles/:id/pricing
  * @access  Admin only
  */
-const updateVehiclePricing = asyncHandler(async (req, res) => {
+const updateVehiclePricing = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { basePrice, pricePerKm, pricePerMinute, minimumFare, surgeMultiplier } = req.body;
 

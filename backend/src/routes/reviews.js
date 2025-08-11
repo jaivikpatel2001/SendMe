@@ -18,7 +18,7 @@ const {
   getUserRatingSummary
 } = require('../controllers/reviewController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -77,7 +77,7 @@ router.get('/:id',
  * @access  Customer, Driver
  */
 router.post('/',
-  authorize('customer', 'driver'),
+  restrictTo('customer', 'driver'),
   [
     body('bookingId')
       .isMongoId()
@@ -217,7 +217,7 @@ router.patch('/:id',
  * @access  Admin only
  */
 router.patch('/:id/moderate',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid review ID'),
     body('status')
@@ -238,7 +238,7 @@ router.patch('/:id/moderate',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid review ID')
   ],

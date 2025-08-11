@@ -5,7 +5,7 @@
 
 const SupportTicket = require('../models/SupportTicket');
 const User = require('../models/User');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
@@ -14,7 +14,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/support
  * @access  Admin (all), User (own tickets)
  */
-const getSupportTickets = asyncHandler(async (req, res) => {
+const getSupportTickets = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -91,7 +91,7 @@ const getSupportTickets = asyncHandler(async (req, res) => {
  * @route   GET /api/support/:id
  * @access  Admin, Ticket owner, Assigned agent
  */
-const getSupportTicketById = asyncHandler(async (req, res) => {
+const getSupportTicketById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const ticket = await SupportTicket.findById(id)
@@ -132,7 +132,7 @@ const getSupportTicketById = asyncHandler(async (req, res) => {
  * @route   POST /api/support
  * @access  Authenticated users
  */
-const createSupportTicket = asyncHandler(async (req, res) => {
+const createSupportTicket = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -188,7 +188,7 @@ const createSupportTicket = asyncHandler(async (req, res) => {
  * @route   PUT /api/support/:id
  * @access  Admin, Ticket owner (limited fields)
  */
-const updateSupportTicket = asyncHandler(async (req, res) => {
+const updateSupportTicket = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -253,7 +253,7 @@ const updateSupportTicket = asyncHandler(async (req, res) => {
  * @route   PATCH /api/support/:id
  * @access  Admin, Ticket owner (limited fields)
  */
-const patchSupportTicket = asyncHandler(async (req, res) => {
+const patchSupportTicket = catchAsync(async (req, res) => {
   // Use the same logic as updateSupportTicket for PATCH
   await updateSupportTicket(req, res);
 });
@@ -263,7 +263,7 @@ const patchSupportTicket = asyncHandler(async (req, res) => {
  * @route   DELETE /api/support/:id
  * @access  Admin only
  */
-const deleteSupportTicket = asyncHandler(async (req, res) => {
+const deleteSupportTicket = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const ticket = await SupportTicket.findById(id);
@@ -290,7 +290,7 @@ const deleteSupportTicket = asyncHandler(async (req, res) => {
  * @route   PATCH /api/support/:id/assign
  * @access  Admin only
  */
-const assignTicket = asyncHandler(async (req, res) => {
+const assignTicket = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { agentId } = req.body;
 
@@ -335,7 +335,7 @@ const assignTicket = asyncHandler(async (req, res) => {
  * @route   POST /api/support/:id/messages
  * @access  Admin, Ticket owner, Assigned agent
  */
-const addTicketMessage = asyncHandler(async (req, res) => {
+const addTicketMessage = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { message, isInternal = false, attachments = [] } = req.body;
 
@@ -382,7 +382,7 @@ const addTicketMessage = asyncHandler(async (req, res) => {
  * @route   PATCH /api/support/:id/escalate
  * @access  Admin, Assigned agent
  */
-const escalateTicket = asyncHandler(async (req, res) => {
+const escalateTicket = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { reason } = req.body;
 
@@ -428,7 +428,7 @@ const escalateTicket = asyncHandler(async (req, res) => {
  * @route   PATCH /api/support/:id/resolve
  * @access  Admin, Assigned agent
  */
-const resolveTicket = asyncHandler(async (req, res) => {
+const resolveTicket = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { summary, actions = [] } = req.body;
 
@@ -475,7 +475,7 @@ const resolveTicket = asyncHandler(async (req, res) => {
  * @route   PATCH /api/support/:id/reopen
  * @access  Admin, Ticket owner
  */
-const reopenTicket = asyncHandler(async (req, res) => {
+const reopenTicket = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { reason } = req.body;
 
@@ -528,7 +528,7 @@ const reopenTicket = asyncHandler(async (req, res) => {
  * @route   GET /api/support/agent/:agentId
  * @access  Admin, Agent (own tickets)
  */
-const getTicketsForAgent = asyncHandler(async (req, res) => {
+const getTicketsForAgent = catchAsync(async (req, res) => {
   const { agentId } = req.params;
   const { status, priority, page = 1, limit = 20 } = req.query;
 
@@ -558,7 +558,7 @@ const getTicketsForAgent = asyncHandler(async (req, res) => {
  * @route   GET /api/support/stats
  * @access  Admin only
  */
-const getSupportStats = asyncHandler(async (req, res) => {
+const getSupportStats = catchAsync(async (req, res) => {
   const { period = '30d', department, agentId } = req.query;
 
   // Calculate date range

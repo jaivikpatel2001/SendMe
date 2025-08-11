@@ -19,7 +19,7 @@ const {
   addBookingMessage
 } = require('../controllers/bookingController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -78,7 +78,7 @@ router.get('/:id/tracking',
  * @access  Customer, Admin
  */
 router.post('/',
-  authorize('customer', 'admin'),
+  restrictTo('customer', 'admin'),
   [
     body('serviceType')
       .isIn(['delivery', 'pickup', 'moving', 'express', 'scheduled'])
@@ -198,7 +198,7 @@ router.patch('/:id',
  * @access  Admin, Driver (assigned bookings)
  */
 router.patch('/:id/status',
-  authorize('admin', 'driver'),
+  restrictTo('admin', 'driver'),
   [
     param('id').isMongoId().withMessage('Invalid booking ID'),
     body('status')
@@ -219,7 +219,7 @@ router.patch('/:id/status',
  * @access  Admin only
  */
 router.patch('/:id/assign-driver',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid booking ID'),
     body('driverId')
@@ -235,7 +235,7 @@ router.patch('/:id/assign-driver',
  * @access  Driver (assigned to booking)
  */
 router.patch('/:id/location',
-  authorize('driver'),
+  restrictTo('driver'),
   [
     param('id').isMongoId().withMessage('Invalid booking ID'),
     body('latitude')

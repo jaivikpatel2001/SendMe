@@ -6,7 +6,7 @@
 const User = require('../models/User');
 const Booking = require('../models/Booking');
 const Review = require('../models/Review');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -17,7 +17,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/users
  * @access  Admin only
  */
-const getUsers = asyncHandler(async (req, res) => {
+const getUsers = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -82,7 +82,7 @@ const getUsers = asyncHandler(async (req, res) => {
  * @route   GET /api/users/:id
  * @access  Admin or own profile
  */
-const getUserById = asyncHandler(async (req, res) => {
+const getUserById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   // Check if user can access this profile
@@ -121,7 +121,7 @@ const getUserById = asyncHandler(async (req, res) => {
  * @route   POST /api/users
  * @access  Admin only
  */
-const createUser = asyncHandler(async (req, res) => {
+const createUser = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -187,7 +187,7 @@ const createUser = asyncHandler(async (req, res) => {
  * @route   PUT /api/users/:id
  * @access  Admin or own profile
  */
-const updateUser = asyncHandler(async (req, res) => {
+const updateUser = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -241,7 +241,7 @@ const updateUser = asyncHandler(async (req, res) => {
  * @route   PATCH /api/users/:id
  * @access  Admin or own profile
  */
-const patchUser = asyncHandler(async (req, res) => {
+const patchUser = catchAsync(async (req, res) => {
   // Use the same logic as updateUser for PATCH
   await updateUser(req, res);
 });
@@ -251,7 +251,7 @@ const patchUser = asyncHandler(async (req, res) => {
  * @route   DELETE /api/users/:id
  * @access  Admin only
  */
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const user = await User.findById(id);
@@ -330,7 +330,7 @@ const getUserStats = async (userId) => {
  * @route   PATCH /api/users/:id/status
  * @access  Admin only
  */
-const updateUserStatus = asyncHandler(async (req, res) => {
+const updateUserStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { status, reason } = req.body;
 
@@ -381,7 +381,7 @@ const updateUserStatus = asyncHandler(async (req, res) => {
  * @route   PATCH /api/users/:id/location
  * @access  Driver only (own location)
  */
-const updateDriverLocation = asyncHandler(async (req, res) => {
+const updateDriverLocation = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { latitude, longitude } = req.body;
 
@@ -431,7 +431,7 @@ const updateDriverLocation = asyncHandler(async (req, res) => {
  * @route   PATCH /api/users/:id/online-status
  * @access  Driver only (own status)
  */
-const toggleDriverOnlineStatus = asyncHandler(async (req, res) => {
+const toggleDriverOnlineStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { isOnline } = req.body;
 
@@ -478,7 +478,7 @@ const toggleDriverOnlineStatus = asyncHandler(async (req, res) => {
  * @route   GET /api/users/drivers/nearby
  * @access  Admin, Customer
  */
-const getNearbyDrivers = asyncHandler(async (req, res) => {
+const getNearbyDrivers = catchAsync(async (req, res) => {
   const { latitude, longitude, radius = 10, vehicleType } = req.query;
 
   if (!latitude || !longitude) {

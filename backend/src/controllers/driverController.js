@@ -11,6 +11,7 @@ const Notification = require('../models/Notification');
 const SupportTicket = require('../models/SupportTicket');
 const { AppError, catchAsync } = require('../middleware/errorHandler');
 const logger = require('../utils/logger');
+const time = require('../utils/time');
 
 /**
  * Register as a driver
@@ -581,22 +582,19 @@ const getEarnings = catchAsync(async (req, res, next) => {
 
   switch (period) {
     case 'daily':
-      const today = new Date(now);
-      today.setHours(0, 0, 0, 0);
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      dateFilter = { createdAt: { $gte: today, $lt: tomorrow } };
+      const todayStart = time.startOfUTCDay(now);
+      const todayEnd = time.endOfUTCDay(now);
+      dateFilter = { createdAt: { $gte: todayStart, $lt: todayEnd } };
       break;
 
     case 'weekly':
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay());
-      weekStart.setHours(0, 0, 0, 0);
+      const weekStart = time.startOfUTCDay(now);
+      weekStart.setUTCDate(weekStart.getUTCDate() - weekStart.getUTCDay());
       dateFilter = { createdAt: { $gte: weekStart } };
       break;
 
     case 'monthly':
-      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
       dateFilter = { createdAt: { $gte: monthStart } };
       break;
 
@@ -604,8 +602,8 @@ const getEarnings = catchAsync(async (req, res, next) => {
       if (startDate && endDate) {
         dateFilter = {
           createdAt: {
-            $gte: new Date(startDate),
-            $lte: new Date(endDate)
+            $gte: require('../utils/time').parseDateToUTCStart(startDate),
+            $lte: require('../utils/time').parseDateToUTCEnd(endDate)
           }
         };
       }

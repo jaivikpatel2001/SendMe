@@ -15,7 +15,7 @@ const {
   publishContent
 } = require('../controllers/cmsController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -63,7 +63,7 @@ router.use(protect);
  * @access  Admin only
  */
 router.post('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     body('title')
       .trim()
@@ -174,7 +174,7 @@ router.post('/',
  * @access  Admin only
  */
 router.put('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid content ID'),
     body('title')
@@ -214,7 +214,7 @@ router.put('/:id',
  * @access  Admin only
  */
 router.patch('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid content ID')
   ],
@@ -227,7 +227,7 @@ router.patch('/:id',
  * @access  Admin only
  */
 router.patch('/:id/publish',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid content ID'),
     body('status')
@@ -251,7 +251,7 @@ router.patch('/:id/publish',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid content ID')
   ],

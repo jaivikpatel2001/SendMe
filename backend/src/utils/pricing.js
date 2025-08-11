@@ -56,9 +56,11 @@ const calculateDuration = (distance, timeOfDay = 'afternoon') => {
  * @param {Date} date - Date object
  * @returns {string} Time category
  */
+const { getUTCHour, getUTCDay } = require('./time');
+
 const getTimeOfDay = (date = new Date()) => {
-  const hour = date.getHours();
-  
+  const hour = getUTCHour(date);
+
   if (hour >= 6 && hour < 10) return 'morning';
   if (hour >= 10 && hour < 17) return 'afternoon';
   if (hour >= 17 && hour < 22) return 'evening';
@@ -71,15 +73,15 @@ const getTimeOfDay = (date = new Date()) => {
  * @returns {boolean} Is peak hour
  */
 const isPeakHour = (date = new Date()) => {
-  const hour = date.getHours();
-  const day = date.getDay(); // 0 = Sunday, 6 = Saturday
-  
-  // Weekday peak hours: 7-10 AM and 5-8 PM
+  const hour = getUTCHour(date);
+  const day = getUTCDay(date); // 0 = Sunday, 6 = Saturday
+
+  // Weekday peak hours: 7-10 AM and 5-8 PM (UTC)
   if (day >= 1 && day <= 5) {
     return (hour >= 7 && hour < 10) || (hour >= 17 && hour < 20);
   }
-  
-  // Weekend peak hours: 11 AM - 2 PM and 6-9 PM
+
+  // Weekend peak hours: 11 AM - 2 PM and 6-9 PM (UTC)
   return (hour >= 11 && hour < 14) || (hour >= 18 && hour < 21);
 };
 

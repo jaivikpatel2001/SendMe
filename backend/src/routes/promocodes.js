@@ -16,7 +16,7 @@ const {
   getApplicablePromoCodes
 } = require('../controllers/promoCodeController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.use(protect);
  * @access  Customer, Admin
  */
 router.get('/applicable',
-  authorize('customer', 'admin'),
+  restrictTo('customer', 'admin'),
   [
     query('orderValue').optional().isFloat({ min: 0 }).withMessage('Order value must be a positive number'),
     query('serviceType').optional().isIn(['delivery', 'pickup', 'moving', 'express', 'scheduled']).withMessage('Invalid service type'),
@@ -45,7 +45,7 @@ router.get('/applicable',
  * @access  Customer, Admin
  */
 router.post('/validate',
-  authorize('customer', 'admin'),
+  restrictTo('customer', 'admin'),
   [
     body('code')
       .trim()
@@ -75,7 +75,7 @@ router.post('/validate',
  * @access  Admin only
  */
 router.get('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     query('page').optional().isInt({ min: 1 }).withMessage('Page must be a positive integer'),
     query('limit').optional().isInt({ min: 1, max: 100 }).withMessage('Limit must be between 1 and 100'),
@@ -94,7 +94,7 @@ router.get('/',
  * @access  Admin only
  */
 router.get('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid promo code ID')
   ],
@@ -107,7 +107,7 @@ router.get('/:id',
  * @access  Admin only
  */
 router.post('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     body('code')
       .optional()
@@ -182,7 +182,7 @@ router.post('/',
  * @access  Admin only
  */
 router.put('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid promo code ID'),
     body('name')
@@ -221,7 +221,7 @@ router.put('/:id',
  * @access  Admin only
  */
 router.patch('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid promo code ID')
   ],
@@ -234,7 +234,7 @@ router.patch('/:id',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid promo code ID')
   ],

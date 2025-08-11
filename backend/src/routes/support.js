@@ -21,7 +21,7 @@ const {
   getSupportStats
 } = require('../controllers/supportController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -35,7 +35,7 @@ router.use(protect);
  * @access  Admin only
  */
 router.get('/stats',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     query('period').optional().isIn(['7d', '30d', '90d']).withMessage('Invalid period'),
     query('department').optional().isIn(['customer_service', 'technical_support', 'billing', 'safety', 'operations', 'management']).withMessage('Invalid department'),
@@ -254,7 +254,7 @@ router.patch('/:id',
  * @access  Admin only
  */
 router.patch('/:id/assign',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid ticket ID'),
     body('agentId')
@@ -270,7 +270,7 @@ router.patch('/:id/assign',
  * @access  Admin, Assigned agent
  */
 router.patch('/:id/escalate',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid ticket ID'),
     body('reason')
@@ -289,7 +289,7 @@ router.patch('/:id/escalate',
  * @access  Admin, Assigned agent
  */
 router.patch('/:id/resolve',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid ticket ID'),
     body('summary')
@@ -335,7 +335,7 @@ router.patch('/:id/reopen',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid ticket ID')
   ],

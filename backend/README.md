@@ -75,17 +75,26 @@ backend/
 │   │   └── CmsContent.js
 │   ├── routes/          # API routes
 │   │   ├── auth.js
+│   │   ├── public.js
 │   │   ├── customer.js
 │   │   ├── driver.js
 │   │   ├── admin.js
-│   │   └── public.js
+│   │   ├── users.js
+│   │   ├── bookings.js
+│   │   ├── vehicles.js
+│   │   ├── promocodes.js
+│   │   ├── reviews.js
+│   │   ├── notifications.js
+│   │   ├── cms.js
+│   │   └── support.js
 │   ├── utils/           # Utility functions
 │   │   ├── jwt.js
 │   │   ├── logger.js
 │   │   ├── email.js
 │   │   ├── sms.js
 │   │   ├── pricing.js
-│   │   └── distance.js
+│   │   ├── distance.js
+│   │   └── time.js
 │   ├── seeders/         # Database seeders
 │   │   ├── index.js
 │   │   ├── vehicleTypes.js
@@ -362,6 +371,10 @@ curl -X POST http://localhost:5000/api/auth/login \
 - **Development**: `http://localhost:5000`
 - **Production**: `https://your-domain.com`
 
+Health and API info:
+- Health: GET `/health`
+- API Info: GET `/api`
+
 ### Authentication
 All protected endpoints require a Bearer token in the Authorization header:
 ```
@@ -399,6 +412,8 @@ All API responses follow this structure:
 ```
 
 ### Endpoint Categories
+
+Note on time handling: all dates/times stored and returned by the API are UTC-based. Date-only inputs (YYYY-MM-DD) are interpreted as UTC day boundaries.
 
 #### 🔐 Authentication Endpoints
 | Method | Endpoint | Description | Auth Required |
@@ -464,7 +479,7 @@ All API responses follow this structure:
 | GET | `/api/admin/promo-codes` | Get promo codes | Yes (Admin) |
 | PUT | `/api/admin/promo-codes/:id` | Update promo code | Yes (Admin) |
 | GET | `/api/admin/support-tickets` | Support tickets | Yes (Admin) |
-| PUT | `/api/admin/support-tickets/:id/assign` | Assign ticket | Yes (Admin) |
+| PATCH | `/api/admin/support-tickets/:id/assign` | Assign ticket | Yes (Admin) |
 | GET | `/api/admin/analytics` | Platform analytics | Yes (Admin) |
 | GET | `/api/admin/system-health` | System health | Yes (Admin) |
 

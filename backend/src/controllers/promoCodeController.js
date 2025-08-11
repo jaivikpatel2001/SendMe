@@ -5,7 +5,7 @@
 
 const PromoCode = require('../models/PromoCode');
 const User = require('../models/User');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
@@ -14,7 +14,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/promocodes
  * @access  Admin only
  */
-const getPromoCodes = asyncHandler(async (req, res) => {
+const getPromoCodes = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -78,7 +78,7 @@ const getPromoCodes = asyncHandler(async (req, res) => {
  * @route   GET /api/promocodes/:id
  * @access  Admin only
  */
-const getPromoCodeById = asyncHandler(async (req, res) => {
+const getPromoCodeById = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const promoCode = await PromoCode.findById(id)
@@ -106,7 +106,7 @@ const getPromoCodeById = asyncHandler(async (req, res) => {
  * @route   POST /api/promocodes
  * @access  Admin only
  */
-const createPromoCode = asyncHandler(async (req, res) => {
+const createPromoCode = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -137,6 +137,11 @@ const createPromoCode = asyncHandler(async (req, res) => {
     });
   }
 
+  // Normalize validity dates to UTC day boundaries if provided
+  const { parseDateToUTCStart, parseDateToUTCEnd } = require('../utils/time');
+  if (promoCodeData.validFrom) promoCodeData.validFrom = parseDateToUTCStart(promoCodeData.validFrom);
+  if (promoCodeData.validUntil) promoCodeData.validUntil = parseDateToUTCEnd(promoCodeData.validUntil);
+
   const promoCode = await PromoCode.create(promoCodeData);
 
   logger.info(`New promo code created: ${promoCode.code} by ${req.user.email}`);
@@ -153,7 +158,7 @@ const createPromoCode = asyncHandler(async (req, res) => {
  * @route   PUT /api/promocodes/:id
  * @access  Admin only
  */
-const updatePromoCode = asyncHandler(async (req, res) => {
+const updatePromoCode = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = {
     ...req.body,
@@ -182,6 +187,11 @@ const updatePromoCode = asyncHandler(async (req, res) => {
   delete updates.usageHistory;
   delete updates.createdBy;
 
+  // Normalize validity dates to UTC day boundaries if provided
+  const { parseDateToUTCStart, parseDateToUTCEnd } = require('../utils/time');
+  if (updates.validFrom) updates.validFrom = parseDateToUTCStart(updates.validFrom);
+  if (updates.validUntil) updates.validUntil = parseDateToUTCEnd(updates.validUntil);
+
   const updatedPromoCode = await PromoCode.findByIdAndUpdate(
     id,
     { $set: updates },
@@ -202,7 +212,7 @@ const updatePromoCode = asyncHandler(async (req, res) => {
  * @route   PATCH /api/promocodes/:id
  * @access  Admin only
  */
-const patchPromoCode = asyncHandler(async (req, res) => {
+const patchPromoCode = catchAsync(async (req, res) => {
   // Use the same logic as updatePromoCode for PATCH
   await updatePromoCode(req, res);
 });
@@ -212,7 +222,7 @@ const patchPromoCode = asyncHandler(async (req, res) => {
  * @route   DELETE /api/promocodes/:id
  * @access  Admin only
  */
-const deletePromoCode = asyncHandler(async (req, res) => {
+const deletePromoCode = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const promoCode = await PromoCode.findById(id);
@@ -241,7 +251,7 @@ const deletePromoCode = asyncHandler(async (req, res) => {
  * @route   POST /api/promocodes/validate
  * @access  Customer, Admin
  */
-const validatePromoCode = asyncHandler(async (req, res) => {
+const validatePromoCode = catchAsync(async (req, res) => {
   const { code, orderValue = 0, serviceType, vehicleType } = req.body;
 
   if (!code) {
@@ -314,7 +324,7 @@ const validatePromoCode = asyncHandler(async (req, res) => {
  * @route   GET /api/promocodes/applicable
  * @access  Customer, Admin
  */
-const getApplicablePromoCodes = asyncHandler(async (req, res) => {
+const getApplicablePromoCodes = catchAsync(async (req, res) => {
   const { orderValue = 0, serviceType, vehicleType } = req.query;
 
   const applicableCodes = await PromoCode.findApplicableForUser(

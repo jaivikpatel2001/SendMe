@@ -16,7 +16,7 @@ const {
   updateVehiclePricing
 } = require('../controllers/vehicleController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -59,7 +59,7 @@ router.use(protect);
  * @access  Admin only
  */
 router.post('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     body('name')
       .trim()
@@ -121,7 +121,7 @@ router.post('/',
  * @access  Admin only
  */
 router.put('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid vehicle ID'),
     body('name')
@@ -156,7 +156,7 @@ router.put('/:id',
  * @access  Admin only
  */
 router.patch('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid vehicle ID')
   ],
@@ -169,7 +169,7 @@ router.patch('/:id',
  * @access  Admin only
  */
 router.patch('/:id/availability',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid vehicle ID'),
     body('isActive')
@@ -194,7 +194,7 @@ router.patch('/:id/availability',
  * @access  Admin only
  */
 router.patch('/:id/pricing',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid vehicle ID'),
     body('basePrice')
@@ -227,7 +227,7 @@ router.patch('/:id/pricing',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid vehicle ID')
   ],

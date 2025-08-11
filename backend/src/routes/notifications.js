@@ -17,7 +17,7 @@ const {
   getNotificationStats
 } = require('../controllers/notificationController');
 
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 const { generalLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
@@ -84,7 +84,7 @@ router.get('/:id',
  * @access  Admin only
  */
 router.post('/',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     body('recipient')
       .isMongoId()
@@ -153,7 +153,7 @@ router.post('/',
  * @access  Admin only
  */
 router.put('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid notification ID'),
     body('title')
@@ -188,7 +188,7 @@ router.put('/:id',
  * @access  Admin only
  */
 router.patch('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid notification ID')
   ],
@@ -213,7 +213,7 @@ router.patch('/:id/read',
  * @access  Admin only
  */
 router.delete('/:id',
-  authorize('admin'),
+  restrictTo('admin'),
   [
     param('id').isMongoId().withMessage('Invalid notification ID')
   ],

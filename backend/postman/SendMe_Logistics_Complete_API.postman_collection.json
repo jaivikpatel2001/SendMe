@@ -38,8 +38,13 @@
 	],
 	"variable": [
 		{
+			"key": "serverUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
 			"key": "baseUrl",
-			"value": "http://localhost:5000/api",
+			"value": "{{serverUrl}}/api",
 			"type": "string"
 		},
 		{
@@ -2591,7 +2596,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/health",
+							"raw": "{{serverUrl}}/health",
 							"host": [
 								"{{baseUrl}}"
 							],

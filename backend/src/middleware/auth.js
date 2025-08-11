@@ -319,6 +319,9 @@ const validateApiKey = (req, res, next) => {
   next();
 };
 
+// Backward-compatible alias for older route code
+const authorize = (...roles) => restrictTo(...roles);
+
 module.exports = {
   protect,
   restrictTo,
@@ -329,5 +332,6 @@ module.exports = {
   requireCustomerAccess,
   requireAdminAccess,
   sensitiveOperationLimit,
-  validateApiKey
+  validateApiKey,
+  authorize
 };

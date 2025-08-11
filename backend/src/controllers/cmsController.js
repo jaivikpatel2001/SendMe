@@ -4,7 +4,7 @@
  */
 
 const CmsContent = require('../models/CmsContent');
-const asyncHandler = require('express-async-handler');
+const { catchAsync } = require('../middleware/errorHandler');
 const { validationResult } = require('express-validator');
 const logger = require('../utils/logger');
 
@@ -13,7 +13,7 @@ const logger = require('../utils/logger');
  * @route   GET /api/cms
  * @access  Admin (all), Public (published only)
  */
-const getCmsContent = asyncHandler(async (req, res) => {
+const getCmsContent = catchAsync(async (req, res) => {
   const {
     page = 1,
     limit = 20,
@@ -32,12 +32,14 @@ const getCmsContent = asyncHandler(async (req, res) => {
   
   // Non-admin users can only see published, public content
   if (req.user?.role !== 'admin') {
+    const { nowUTC } = require('../utils/time');
+    const now = nowUTC();
     query.status = 'published';
     query.visibility = 'public';
-    query.publishAt = { $lte: new Date() };
+    query.publishAt = { $lte: now };
     query.$or = [
       { unpublishAt: { $exists: false } },
-      { unpublishAt: { $gte: new Date() } }
+      { unpublishAt: { $gte: now } }
     ];
   }
 
@@ -93,7 +95,7 @@ const getCmsContent = asyncHandler(async (req, res) => {
  * @route   GET /api/cms/:identifier
  * @access  Admin (all), Public (published only)
  */
-const getCmsContentById = asyncHandler(async (req, res) => {
+const getCmsContentById = catchAsync(async (req, res) => {
   const { identifier } = req.params;
 
   // Try to find by ID first, then by slug
@@ -106,12 +108,14 @@ const getCmsContentById = asyncHandler(async (req, res) => {
 
   // Non-admin users can only see published, public content
   if (req.user?.role !== 'admin') {
+    const { nowUTC } = require('../utils/time');
+    const now = nowUTC();
     query.status = 'published';
     query.visibility = 'public';
-    query.publishAt = { $lte: new Date() };
+    query.publishAt = { $lte: now };
     query.$or = [
       { unpublishAt: { $exists: false } },
-      { unpublishAt: { $gte: new Date() } }
+      { unpublishAt: { $gte: now } }
     ];
   }
 
@@ -145,7 +149,7 @@ const getCmsContentById = asyncHandler(async (req, res) => {
  * @route   POST /api/cms
  * @access  Admin only
  */
-const createCmsContent = asyncHandler(async (req, res) => {
+const createCmsContent = catchAsync(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -194,7 +198,7 @@ const createCmsContent = asyncHandler(async (req, res) => {
  * @route   PUT /api/cms/:id
  * @access  Admin only
  */
-const updateCmsContent = asyncHandler(async (req, res) => {
+const updateCmsContent = catchAsync(async (req, res) => {
   const { id } = req.params;
   const updates = {
     ...req.body,
@@ -263,7 +267,7 @@ const updateCmsContent = asyncHandler(async (req, res) => {
  * @route   PATCH /api/cms/:id
  * @access  Admin only
  */
-const patchCmsContent = asyncHandler(async (req, res) => {
+const patchCmsContent = catchAsync(async (req, res) => {
   // Use the same logic as updateCmsContent for PATCH
   await updateCmsContent(req, res);
 });
@@ -273,7 +277,7 @@ const patchCmsContent = asyncHandler(async (req, res) => {
  * @route   DELETE /api/cms/:id
  * @access  Admin only
  */
-const deleteCmsContent = asyncHandler(async (req, res) => {
+const deleteCmsContent = catchAsync(async (req, res) => {
   const { id } = req.params;
 
   const content = await CmsContent.findById(id);
@@ -300,7 +304,7 @@ const deleteCmsContent = asyncHandler(async (req, res) => {
  * @route   PATCH /api/cms/:id/publish
  * @access  Admin only
  */
-const publishContent = asyncHandler(async (req, res) => {
+const publishContent = catchAsync(async (req, res) => {
   const { id } = req.params;
   const { status, publishAt, unpublishAt } = req.body;
 
@@ -322,9 +326,10 @@ const publishContent = asyncHandler(async (req, res) => {
     });
   }
 
+  const { parseDateToUTCStart, parseDateToUTCEnd } = require('../utils/time');
   content.status = status;
-  if (publishAt) content.publishAt = new Date(publishAt);
-  if (unpublishAt) content.unpublishAt = new Date(unpublishAt);
+  if (publishAt) content.publishAt = parseDateToUTCStart(publishAt);
+  if (unpublishAt) content.unpublishAt = parseDateToUTCEnd(unpublishAt);
 
   await content.save();
 
